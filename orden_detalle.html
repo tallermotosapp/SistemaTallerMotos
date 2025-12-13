@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Orden</title>
+    
+    <link rel="stylesheet" href="css/estilos.css">
+
+    <style>
+        /* Estilos específicos para esta página */
+        .top-bar {
+            display: flex;
+            /* Ahora alineamos a la izquierda porque solo hay un botón */
+            justify-content: flex-start; 
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .total-row td { font-size: 1.2em; font-weight: bold; }
+        .total-final { font-size: 1.5em; color: var(--success); font-weight: bold; }
+        
+        /* Ajuste para los formularios pequeños de agregar */
+        .mini-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        .mini-form input, .mini-form select { margin: 0; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="brand-container">
+                <img src="img/logo_sawho.png" alt="Logo SAWHO" class="logo-img">
+                <h1>Detalle de Orden</h1>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="top-bar">
+            <a href="clientes.html" class="btn-volver" style="background-color: var(--text-light);">&lt;&lt; Volver a Clientes</a>
+            
+            </div>
+
+        <section id="info-general">
+            <h2>Información General de la Orden</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <p><strong>Orden ID:</strong> <span id="detalle-orden-id" style="color: var(--primary); font-weight: bold;">...</span></p>
+                    <p><strong>Cliente:</strong> <span id="detalle-cliente">...</span></p>
+                    <p><strong>Moto:</strong> <span id="detalle-moto">...</span></p>
+                </div>
+                <div>
+                    <p><strong>Estado:</strong> 
+                        <select id="detalle-estado">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="En Diagnostico">En Diagnóstico</option>
+                            <option value="En Proceso">En Proceso</option>
+                            <option value="Repuestos Pedidos">Repuestos Pedidos</option>
+                            <option value="Finalizada">Finalizada</option>
+                            <option value="Entregada">Entregada</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </p>
+                    
+                    <p><strong>Pago:</strong> 
+                        <select id="detalle-pago" style="font-weight: bold;">
+                            <option value="Pendiente" style="color: var(--danger);">🔴 NO PAGADO (Pendiente)</option>
+                            <option value="Pagado" style="color: var(--success);">🟢 PAGADO</option>
+                        </select>
+                    </p>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+
+            <p><strong>Diagnóstico Cliente:</strong> <span id="detalle-diag-cliente">...</span></p>
+            
+            <label for="detalle-diag-taller" style="font-weight: bold; display: block; margin-top: 10px;">Diagnóstico Taller:</label>
+            <textarea id="detalle-diag-taller" style="width: 100%;" rows="3" placeholder="Escribe el diagnóstico técnico aquí..."></textarea>
+            
+            <br><br>
+            <button id="btn-guardar-info" style="width: 100%;">Guardar Cambios de Info</button>
+        </section>
+
+        <section id="seccion-servicios">
+            <h3>Servicios / Mano de Obra</h3>
+            <table id="tabla-servicios">
+                <thead>
+                    <tr>
+                        <th>Descripción del Servicio</th>
+                        <th>Precio</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-servicios-body">
+                    </tbody>
+            </table>
+            
+            <form id="form-nuevo-servicio" class="mini-form">
+                <input type="text" id="servicio-desc" placeholder="Descripción (Ej: Cambio de Aceite)" required style="flex: 2;">
+                <input type="number" id="servicio-precio" placeholder="Precio ($)" step="0.01" min="0" required style="flex: 1;">
+                <button type="submit" style="background-color: var(--primary);">+ Añadir</button>
+            </form>
+        </section>
+
+        <section id="seccion-repuestos">
+            <h3>Repuestos / Accesorios Usados</h3>
+            <table id="tabla-repuestos">
+                <thead>
+                    <tr>
+                        <th>Item (del Inventario)</th>
+                        <th>Cant.</th>
+                        <th>Precio Unit.</th>
+                        <th>Subtotal</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-repuestos-body">
+                    </tbody>
+            </table>
+            
+            <form id="form-nuevo-repuesto" class="mini-form">
+                <select id="repuesto-select" required style="flex: 3;">
+                    <option value="">-- Cargando Inventario... --</option>
+                </select>
+                <input type="number" id="repuesto-cantidad" value="1" step="1" min="1" required style="flex: 1;" placeholder="Cant.">
+                <button type="submit" style="background-color: var(--primary);">+ Añadir</button>
+            </form>
+        </section>
+
+        <section id="seccion-total" style="background-color: #FFF8E1; border: 1px solid #FFE0B2;">
+            <h2 style="border-bottom-color: #FFE0B2; color: #E65100;">Total de la Orden</h2>
+            <table style="width: 100%; background: transparent; box-shadow: none;">
+                <tr class="total-row">
+                    <td style="text-align: right;">Subtotal Servicios:</td>
+                    <td id="total-servicios" style="width: 150px;">$ 0.00</td>
+                </tr>
+                <tr class="total-row">
+                    <td style="text-align: right;">Subtotal Repuestos:</td>
+                    <td id="total-repuestos">$ 0.00</td>
+                </tr>
+                <tr class="total-row">
+                    <td style="text-align: right; font-size: 1.3em;"><strong>GRAN TOTAL:</strong></td>
+                    <td id="gran-total" class="total-final">$ 0.00</td>
+                </tr>
+            </table>
+            <br>
+            <button id="btn-actualizar-total-general" style="width: 100%; background-color: #E65100; font-size: 1.1em;">
+                Actualizar Total en la Orden
+            </button>
+        </section>
+    </main>
+
+    <script src="js/detalle.js"></script>
+</body>
+</html>

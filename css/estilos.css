@@ -1,0 +1,315 @@
+/* =========================================
+   PALETA DE COLORES Y VARIABLES
+   ========================================= */
+:root {
+    --bg-body: #FDFBF7;      /* Blanco crema muy suave */
+    --bg-card: #FFFFFF;      /* Blanco puro */
+    --primary: #8D6E63;      /* Café Moca (Botones/Header) */
+    --primary-dark: #5D4037; /* Café Oscuro (Hover) */
+    --text-main: #3E2723;    /* Texto principal (Casi negro) */
+    --text-light: #795548;   /* Texto secundario */
+    --border: #EFEBE9;       /* Bordes muy sutiles */
+    --shadow: 0 10px 30px rgba(62, 39, 35, 0.05); /* Sombra elegante */
+    
+    /* Colores semánticos (suaves) */
+    --success: #66BB6A;      /* Verde suave */
+    --danger: #EF5350;       /* Rojo suave */
+    --info: #42A5F5;         /* Azul suave */
+    --warning: #FFA726;      /* Naranja suave */
+}
+
+/* =========================================
+   ESTILOS GENERALES
+   ========================================= */
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    margin: 0;
+    padding-bottom: 60px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   HEADER Y NAVEGACIÓN (LOGO GRANDE EN ESQUINA + COMPACTO)
+   ========================================= */
+header.main-header {
+    background-color: var(--bg-card);
+    border-bottom: 3px solid var(--primary);
+    padding: 10px 0; /* Más compacto arriba y abajo del header */
+    margin-bottom: 25px; /* Menos espacio con el contenido principal */
+    box-shadow: var(--shadow);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    /* Esto es clave: si solo tiene el logo y el h1, se ajustará */
+    display: flex; /* Usamos flex para centrar h1 más fácil */
+    flex-direction: column; /* Apila el título y la navegación */
+    align-items: center; /* Centra horizontalmente el h1 y la nav */
+    justify-content: center; /* Centra verticalmente si hay espacio */
+    min-height: 110px; /* Altura mínima para el logo + un poco de padding vertical */
+}
+
+/* El Logo (Grande en la esquina) */
+.logo-img {
+    position: absolute; /* Lo sacamos del flujo normal */
+    left: 0;            /* Pegado a la izquierda */
+    top: 50%;           /* Centrado verticalmente dentro de .header-content */
+    transform: translateY(-50%); /* Ajuste fino para centrar */
+    height: 150px;      /* ¡LOGO GRANDE! */
+    width: auto;
+    object-fit: contain;
+    z-index: 10;
+}
+
+header h1 {
+    font-weight: 700;
+    letter-spacing: 1.5px; /* Ajuste para un look más compacto */
+    margin: 0 0 5px 0; /* Menos margen inferior del título */
+    text-transform: uppercase;
+    font-size: 1.9rem; /* Un poco más pequeño para ser compacto */
+    color: var(--primary-dark);
+    text-align: center;
+    z-index: 1;
+    line-height: 1.2;
+    padding-left: 100px; /* Ajuste para que el texto no se superponga al logo */
+    padding-right: 100px; /* Simétrico al padding-left */
+    box-sizing: border-box; /* Para que el padding no desborde */
+}
+
+/* Navegación Compacta */
+.taller-nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px; /* Menos espacio entre botones */
+    margin-top: 5px; /* Más cerca del título */
+    padding-top: 5px; /* Un poco de padding para separar visualmente */
+    border-top: 1px solid var(--border); /* Línea sutil de separación */
+    width: fit-content; /* Para que la línea se ajuste al ancho de los botones */
+}
+
+.nav-link {
+    color: var(--text-light);
+    background-color: #FAFAFA;
+    padding: 7px 18px; /* Botones más compactos */
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 50px;
+    font-size: 0.88rem; /* Letra un poco más chica */
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(141, 110, 99, 0.2);
+}
+
+.nav-link.active {
+    background-color: var(--primary-dark);
+    color: white;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* =========================================
+   CONTENEDORES Y TARJETAS
+   ========================================= */
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+section {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+}
+
+h2 {
+    color: var(--primary-dark);
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+h3 {
+    color: var(--text-light);
+    font-size: 1.2rem;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* =========================================
+   FORMULARIOS
+   ========================================= */
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #D7CCC8;
+    background-color: #FAFAFA;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+    outline: none;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(141, 110, 99, 0.1);
+}
+
+/* =========================================
+   BOTONES
+   ========================================= */
+button, .btn-volver, input[type="submit"] {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 6px rgba(141, 110, 99, 0.2);
+}
+
+button:hover, input[type="submit"]:hover, .btn-volver:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(141, 110, 99, 0.3);
+}
+
+/* Botones Específicos */
+button[onclick*="borrar"], button[onclick*="eliminar"], #btn-cancelar-cliente {
+    background-color: white;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    box-shadow: none;
+}
+button[onclick*="borrar"]:hover, #btn-cancelar-cliente:hover {
+    background-color: var(--danger);
+    color: white;
+}
+
+button[onclick*="verMotos"], button[onclick*="verHistorial"] {
+    background-color: var(--info);
+    color: white;
+}
+button[onclick*="verMotos"]:hover, button[onclick*="verHistorial"]:hover {
+    background-color: #1E88E5;
+}
+
+/* =========================================
+   TABLAS
+   ========================================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.02);
+}
+
+th {
+    background-color: #F5F5F5;
+    color: var(--text-light);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 18px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+}
+
+td {
+    padding: 15px 18px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover { background-color: #FAFAFA; }
+
+/* =========================================
+   VENTANA MODAL
+   ========================================= */
+.modal {
+    background-color: rgba(62, 39, 35, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    padding: 40px;
+}
+
+.close {
+    color: var(--text-light);
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    font-size: 2rem;
+    line-height: 0.8;
+}
+.close:hover {
+    opacity: 1;
+    color: var(--primary);
+}
+
+/* =========================================
+   UTILIDADES Y BADGES
+   ========================================= */
+.total-final {
+    color: var(--primary-dark) !important;
+    font-size: 1.8em !important;
+}
+
+/* Etiquetas de estado (Badges) */
+span[style*="color:green"], b[style*="color:green"] {
+    background-color: #E8F5E9;
+    color: #2E7D32 !important;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 700;
+    display: inline-block;
+}
+
+span[style*="color:red"], b[style*="color:red"] {
+    background-color: #FFEBEE;
+    color: #C62828 !important;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 700;
+    display: inline-block;
+}

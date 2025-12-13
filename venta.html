@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venta de Mostrador</title>
+    
+    <link rel="stylesheet" href="css/estilos.css">
+
+    <style>
+        /* Layout de dos columnas */
+        main { 
+            display: flex; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            gap: 20px; 
+            flex-wrap: wrap;
+            padding: 0 20px;
+        } 
+        
+        #panel-inventario { 
+            flex: 2; 
+            min-width: 300px;
+        }
+        
+        #panel-venta { 
+            flex: 3; 
+            min-width: 400px;
+            border-color: var(--info); /* Usamos la variable de color del CSS */
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-bottom: 15px;
+        } 
+        
+        #panel-historial {
+            flex-basis: 100%; 
+            margin-top: 20px;
+        }
+        
+        /* Ajuste para el total */
+        .total-final { 
+            font-size: 1.5em; 
+            color: var(--success); 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="brand-container">
+                <img src="img/logo_sawho.png" alt="Logo SAWHO" class="logo-img">
+                <h1>Venta de Mostrador</h1>
+            </div>
+            
+            <nav class="taller-nav">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="clientes.html" class="nav-link">Taller</a>
+                <a href="venta.html" class="nav-link active">Ventas</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="panel-inventario">
+            <h3>Inventario Disponible</h3>
+            
+            <a href="inventario.html" target="_blank" style="font-size: 0.9em; display: block; margin-bottom: 10px; text-decoration: none; color: var(--primary);">
+                (+) Gestionar Inventario
+            </a>
+            
+            <input type="text" id="filtro-inventario" placeholder="Buscar repuesto..." style="width: 100%;">
+            <table id="tabla-inventario">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-inventario-body">
+                    </tbody>
+            </table>
+        </section>
+
+        <section id="panel-venta">
+            <h3>Carrito de Venta</h3>
+            <table id="tabla-carrito">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Cant.</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-carrito-body">
+                    </tbody>
+            </table>
+            <h2 style="text-align: right; font-size: 1.2rem;">Total a Pagar: <span id="total-venta" class="total-final">$ 0.00</span></h2>
+            
+            <hr style="border-top: 1px solid var(--border); margin: 20px 0;">
+
+            <h3>Datos del Cliente (Opcional)</h3>
+            <form id="form-checkout">
+                <input type="text" id="venta-cliente-nombre" placeholder="Nombre (Ej: Mostrador)">
+                <input type="text" id="venta-cliente-telefono" placeholder="Teléfono (Opcional)">
+                
+                <div style="width: 100%; margin-top: 10px;">
+                    <button type="submit" style="background-color: var(--success); width: 100%; font-size: 1.1em;">
+                        ✅ FINALIZAR VENTA
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section id="panel-historial">
+            <h3>Historial de Ventas Recientes</h3>
+            <table id="tabla-historial">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Teléfono</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-historial-body">
+                    </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <script src="js/venta.js"></script>
+</body>
+</html>

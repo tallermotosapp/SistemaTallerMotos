@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Taller - Clientes</title>
+    
+    <link rel="stylesheet" href="css/estilos.css">
+
+    <style>
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(62, 39, 35, 0.6); /* Fondo café oscuro transparente */
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 30px;
+            border: none;
+            width: 90%; 
+            max-width: 900px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close:hover { color: #8D6E63; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+            <div class="brand-container">
+                <img src="img/logo_sawho.png" alt="Logo SAWHO" class="logo-img">
+                <h1>Módulo de Taller</h1>
+            </div>
+            
+            <nav class="taller-nav">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="clientes.html" class="nav-link active">Clientes</a>
+                <a href="inventario.html" class="nav-link">Inventario</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="seccion-clientes">
+            <h2>Gestión de Clientes</h2>
+            
+            <form id="form-cliente">
+                <h3>Agregar/Editar Cliente</h3>
+                <input type="text" id="cliente-nombre" placeholder="Nombre" required>
+                <input type="text" id="cliente-apellido" placeholder="Apellido" required>
+                <input type="tel" id="cliente-telefono" placeholder="Teléfono">
+                <input type="email" id="cliente-email" placeholder="Email">
+                <input type="text" id="cliente-direccion" placeholder="Dirección">
+                <input type="hidden" id="cliente-id">
+                
+                <div style="width: 100%; margin-top: 10px;">
+                    <button type="submit">Guardar Cliente</button>
+                    <button type="button" id="btn-cancelar-cliente" style="display:none; background-color: #EF5350;">Cancelar Edición</button>
+                </div>
+            </form>
+
+            <br>
+            <hr>
+            <br>
+
+            <h3>Lista de Clientes Registrados</h3>
+            <table border="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha Registro</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-clientes-body">
+                    </tbody>
+            </table>
+        </section>
+    </main>
+
+    <div id="modal-historial" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2 style="color: #5D4037; border-bottom: 2px solid #EFEBE9; padding-bottom: 10px;">
+                Historial de Órdenes
+            </h2>
+            <table style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Moto (Placa)</th>
+                        <th>Estado</th>
+                        <th>Pago</th>
+                        <th>Total</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-modal-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/clientes.js"></script>
+</body>
+</html>
