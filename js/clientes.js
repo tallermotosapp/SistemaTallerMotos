@@ -4,9 +4,6 @@ import {
   ref,
   push,
   set,
-  get,
-  update,
-  remove,
   onValue
 } from '../firebase_config.js';
 
@@ -156,4 +153,5 @@ function limpiarFormulario() {
   inputClienteID.value = '';
   btnCancelarCliente.style.display = 'none';
 }
+
 
