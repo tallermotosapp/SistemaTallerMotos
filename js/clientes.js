@@ -8,7 +8,7 @@ import {
   update,
   remove,
   onValue
-} from './firebase_config.js';
+} from '../firebase_config.js';
 
 // =======================
 // VARIABLES
@@ -156,3 +156,4 @@ function limpiarFormulario() {
   inputClienteID.value = '';
   btnCancelarCliente.style.display = 'none';
 }
+
