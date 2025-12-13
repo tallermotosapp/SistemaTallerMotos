@@ -325,14 +325,18 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { 
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged 
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getDatabase, ref, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCQNql_3npQHhkf3TKqk0jdHNCotwqyFg8",
   authDomain: "tallermotosliz.firebaseapp.com",
   projectId: "tallermotosliz",
-  databaseURL:"https://tallermotosliz-default-rtdb.firebaseio.com",
+  databaseURL: "https://tallermotosliz-default-rtdb.firebaseio.com",
   storageBucket: "tallermotosliz.firebasestorage.app",
   messagingSenderId: "536042405456",
   appId: "1:536042405456:web:6ac1e8251d0685f4735b55"
@@ -342,49 +346,35 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-// 🔒 SI YA HAY SESIÓN → INDEX
-const session = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
-if (session) {
-    window.location.replace('index.html');
-}
+// 🔐 SOLO FIREBASE DECIDE
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        window.location.replace('index.html');
+    }
+});
 
+// LOGIN
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const remember = document.getElementById('remember-me').checked;
 
     try {
         const email = username.includes('@') ? username : `${username}@taller.com`;
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const cred = await signInWithEmailAndPassword(auth, email, password);
 
-        const snap = await get(ref(database, 'usuarios/' + userCredential.user.uid));
-
-        if (!snap.exists()) throw 'No existe el usuario';
-
-        const userData = snap.val();
-
-        const sessionData = {
-            uid: userCredential.user.uid,
-            username: userData.username,
-            rol: userData.rol,
-            nombre: userData.nombre
-        };
-
-        if (remember) {
-            localStorage.setItem('userSession', JSON.stringify(sessionData));
-        } else {
-            sessionStorage.setItem('userSession', JSON.stringify(sessionData));
-        }
+        const snap = await get(ref(database, 'usuarios/' + cred.user.uid));
+        if (!snap.exists()) throw 'Usuario no válido';
 
         window.location.replace('index.html');
 
-    } catch (err) {
+    } catch {
         alert('Usuario o contraseña incorrectos');
     }
 });
 </script>
+
 
 </body>
 </html>
