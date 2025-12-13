@@ -66,10 +66,25 @@ async function guardarCliente() {
 
   if (id) {
     await update(dbRef(database, `clientes/${id}`), cliente);
-  } else {
-    cliente.fechaRegistro = new Date().toISOString();
-    await push(dbRef(database, 'clientes'), cliente);
+   } else {
+ 
+  const contadorRef = dbRef(database, 'contadores/clientes');
+  const snapshot = await get(contadorRef);
+
+  let nuevoId = 1;
+  if (snapshot.exists()) {
+    nuevoId = snapshot.val() + 1;
   }
+
+ 
+  await set(dbRef(database, `clientes/${nuevoId}`), {
+    ...cliente,
+    fechaRegistro: new Date().toISOString()
+  });
+
+  await set(contadorRef, nuevoId);
+}
+
 
   limpiarFormulario();
 }
@@ -158,3 +173,4 @@ function limpiarFormulario() {
   inputClienteID.value = '';
   btnCancelarCliente.style.display = 'none';
 }
+
