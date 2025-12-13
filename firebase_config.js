@@ -1,143 +1,223 @@
-// clientes.js
-import {
-    database,
+// ============================================
+// CONFIGURACIÓN DE FIREBASE
+// ============================================
+
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getDatabase, ref, set, get, push, remove, update, onValue, query, orderByChild } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+// ============================================
+// PASO 1: CONFIGURACIÓN DE TU PROYECTO
+// ============================================
+// IMPORTANTE: Reemplaza estos valores con los de TU proyecto de Firebase
+// Los obtienes en: Firebase Console > Project Settings > Your apps
+const firebaseConfig = {
+  apiKey: "AIzaSyCQNql_3npQHhkf3TKqk0jdHNCotwqyFg8",
+  authDomain: "tallermotosliz.firebaseapp.com",
+  projectId: "tallermotosliz",
+  databaseURL:"https://tallermotosliz-default-rtdb.firebaseio.com",
+  storageBucket: "tallermotosliz.firebasestorage.app",
+  messagingSenderId: "536042405456",
+  appId: "1:536042405456:web:6ac1e8251d0685f4735b55",
+  measurementId: "G-KP61WQ8VBQ"
+};
+// ============================================
+// INICIALIZAR FIREBASE
+// ============================================
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+const storage = getStorage(app);
+
+// ============================================
+// EXPORTAR PARA USO EN OTROS ARCHIVOS
+// ============================================
+export { 
+    app, 
+    auth, 
+    database, 
+    storage,
+    // Funciones de Auth
+    onAuthStateChanged,
+    signOut,
+    // Funciones de Database
     ref,
-    push,
     set,
     get,
-    update,
+    push,
     remove,
-    onValue
-} from './firebase_config.js';
+    update,
+    onValue,
+    query,
+    orderByChild,
+    // Funciones de Storage
+    storageRef,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject
+};
 
-let formCliente, btnCancelarCliente;
-let inputClienteID, tablaClientesBody;
-let inputClienteNombre, inputClienteApellido, inputClienteTelefono, inputClienteDireccion;
-let inputClienteFechaCita, inputClienteHoraCita;
+// ============================================
+// FUNCIONES DE UTILIDAD
+// ============================================
 
-document.addEventListener('DOMContentLoaded', () => {
-
-    formCliente = document.getElementById('form-cliente');
-    btnCancelarCliente = document.getElementById('btn-cancelar-cliente');
-
-    inputClienteID = document.getElementById('cliente-id');
-    tablaClientesBody = document.getElementById('tabla-clientes-body');
-
-    inputClienteNombre = document.getElementById('cliente-nombre');
-    inputClienteApellido = document.getElementById('cliente-apellido');
-    inputClienteTelefono = document.getElementById('cliente-telefono');
-    inputClienteDireccion = document.getElementById('cliente-direccion');
-    inputClienteFechaCita = document.getElementById('cliente-fecha-cita');
-    inputClienteHoraCita = document.getElementById('cliente-hora-cita');
-
-    formCliente.addEventListener('submit', e => {
-        e.preventDefault();
-        guardarOActualizarCliente();
-    });
-
-    btnCancelarCliente.addEventListener('click', resetFormularioCliente);
-
-    cargarClientes();
-});
-
-/* ========= CARGAR CLIENTES ========= */
-function cargarClientes() {
-    const clientesRef = ref(database, 'clientes');
-
-    onValue(clientesRef, snapshot => {
-        tablaClientesBody.innerHTML = '';
-
-        if (!snapshot.exists()) {
-            tablaClientesBody.innerHTML = '<tr><td colspan="7">No hay clientes</td></tr>';
-            return;
-        }
-
-        const data = snapshot.val();
-
-        Object.entries(data).forEach(([id, c]) => {
-
-            const fecha = c.fechaRegistro
-                ? new Date(c.fechaRegistro).toLocaleString('es-CO')
-                : '---';
-
-            const cita = c.fechaCita
-                ? `${c.fechaCita} ${c.horaCita || ''}`
-                : '---';
-
-            tablaClientesBody.innerHTML += `
-                <tr>
-                    <td>${id}</td>
-                    <td>${fecha}</td>
-                    <td>${c.nombre}</td>
-                    <td>${c.apellido}</td>
-                    <td>${c.telefono || ''}</td>
-                    <td>${cita}</td>
-                    <td>
-                        <button onclick="editarCliente('${id}')">Editar</button>
-                        <button onclick="borrarCliente('${id}', '${c.nombre} ${c.apellido}')">Borrar</button>
-                    </td>
-                </tr>
-            `;
+/**
+ * Verificar si el usuario está autenticado
+ * Usar en cada página para protegerla
+ */
+export function verificarAutenticacion() {
+    return new Promise((resolve, reject) => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Usuario autenticado
+                resolve(user);
+            } else {
+                // No autenticado - redirigir a login
+                window.location.href = 'login.html';
+                reject('No autenticado');
+            }
         });
     });
 }
 
-/* ========= GUARDAR / ACTUALIZAR ========= */
-async function guardarOActualizarCliente() {
+/**
+ * Obtener datos del usuario actual desde sesión
+ */
+export function obtenerUsuarioActual() {
+    const session = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
+    return session ? JSON.parse(session) : null;
+}
 
-    const id = inputClienteID.value;
-
-    const cliente = {
-        nombre: inputClienteNombre.value,
-        apellido: inputClienteApellido.value,
-        telefono: inputClienteTelefono.value,
-        direccion: inputClienteDireccion.value,
-        fechaCita: inputClienteFechaCita.value || null,
-        horaCita: inputClienteHoraCita.value || null
-    };
-
-    if (id) {
-        await update(ref(database, `clientes/${id}`), cliente);
-    } else {
-        cliente.fechaRegistro = new Date().toISOString();
-        await push(ref(database, 'clientes'), cliente);
+/**
+ * Cerrar sesión
+ */
+export async function cerrarSesion() {
+    try {
+        await signOut(auth);
+        localStorage.removeItem('userSession');
+        sessionStorage.removeItem('userSession');
+        window.location.href = 'login.html';
+    } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+        alert('Error al cerrar sesión');
     }
-
-    resetFormularioCliente();
 }
 
-/* ========= EDITAR ========= */
-window.editarCliente = async function (id) {
-    const snapshot = await get(ref(database, `clientes/${id}`));
-    if (!snapshot.exists()) return;
-
-    const c = snapshot.val();
-
-    inputClienteNombre.value = c.nombre;
-    inputClienteApellido.value = c.apellido;
-    inputClienteTelefono.value = c.telefono || '';
-    inputClienteDireccion.value = c.direccion || '';
-    inputClienteFechaCita.value = c.fechaCita || '';
-    inputClienteHoraCita.value = c.horaCita || '';
-
-    inputClienteID.value = id;
-
-    formCliente.querySelector('h3').innerText = 'Editando Cliente';
-    formCliente.querySelector('button[type="submit"]').innerText = 'Actualizar';
-    btnCancelarCliente.style.display = 'inline';
-};
-
-/* ========= BORRAR ========= */
-window.borrarCliente = async function (id, nombre) {
-    if (!confirm(`¿Borrar a ${nombre}?`)) return;
-    await remove(ref(database, `clientes/${id}`));
-};
-
-/* ========= RESET ========= */
-function resetFormularioCliente() {
-    formCliente.reset();
-    inputClienteID.value = '';
-    formCliente.querySelector('h3').innerText = 'Agregar Cliente';
-    formCliente.querySelector('button[type="submit"]').innerText = 'Guardar Cliente';
-    btnCancelarCliente.style.display = 'none';
+/**
+ * Verificar si el usuario es administrador
+ */
+export function esAdmin() {
+    const user = obtenerUsuarioActual();
+    return user && user.rol === 'admin';
 }
+
+/**
+ * Generar ID único
+ */
+export function generarId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+/**
+ * Formatear fecha para Colombia
+ */
+export function formatearFecha(fecha) {
+    const opciones = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    return new Date(fecha).toLocaleDateString('es-CO', opciones);
+}
+
+/**
+ * Formatear moneda colombiana
+ */
+export function formatearMoneda(valor) {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0
+    }).format(valor);
+}
+
+// ============================================
+// CONFIGURACIÓN DEL TALLER (Editable)
+// ============================================
+export const CONFIG_TALLER = {
+    nombre: "Sistema de Taller", // Cambiar cuando tengas el nombre
+    telefono: "", // Agregar después
+    direccion: "", // Agregar después
+    email: "contacto@taller.com",
+    horario: "Lun-Vie: 8:00 AM - 6:00 PM, Sáb: 8:00 AM - 2:00 PM",
+    
+    // Configuración de recordatorios
+    recordatorios: {
+        diasAntes: 3, // Enviar recordatorio 3 días antes
+        horaEnvio: "09:00", // Hora de envío de recordatorios
+        mensajeTemplate: "Hola {nombre}, te recordamos que tienes una cita el {fecha} a las {hora}. ¡Te esperamos!"
+    },
+    
+    // Configuración de WhatsApp
+    whatsapp: {
+        activo: true,
+        numeroTaller: "573001234567", // Cambiar por tu número
+        mensajeBienvenida: "¡Hola! Gracias por contactarnos. ¿En qué podemos ayudarte?"
+    },
+    
+    // Configuración de TV
+    tv: {
+        actualizacionMinutos: 5,
+        sonidoActivo: true,
+        sonidoUrl: "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"
+    }
+};
+
+// ============================================
+// INICIALIZAR DATOS DE PRUEBA (Solo primera vez)
+// ============================================
+export async function inicializarDatosPrueba() {
+    try {
+        const dbRef = ref(database, 'configuracion/inicializado');
+        const snapshot = await get(dbRef);
+        
+        if (!snapshot.exists()) {
+            console.log('Inicializando datos de prueba...');
+            
+            // Crear estructura de datos básica
+            await set(ref(database, 'configuracion'), {
+                inicializado: true,
+                version: '1.0.0',
+                fechaInstalacion: new Date().toISOString()
+            });
+            
+            console.log('Sistema inicializado correctamente');
+        }
+    } catch (error) {
+        console.error('Error al inicializar datos:', error);
+    }
+}
+
+// ============================================
+// LOGS DEL SISTEMA (Opcional)
+// ============================================
+export async function registrarLog(accion, detalles) {
+    try {
+        const usuario = obtenerUsuarioActual();
+        const logRef = push(ref(database, 'logs'));
+        
+        await set(logRef, {
+            fecha: new Date().toISOString(),
+            usuario: usuario ? usuario.username : 'Sistema',
+            accion: accion,
+            detalles: detalles
+        });
+    } catch (error) {
+        console.error('Error al registrar log:', error);
+    }
+}
+
+console.log('🔥 Firebase configurado correctamente');
