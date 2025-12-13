@@ -1,6 +1,6 @@
 import {
   database,
-  ref,
+  ref as dbRef,
   push,
   set,
   get,
@@ -9,7 +9,7 @@ import {
   onValue
 } from '../firebase_config.js';
 
-console.log('ref:', ref);
+console.log('dbRef:', dbRef);
 
 // =======================
 // VARIABLES
@@ -65,10 +65,10 @@ async function guardarCliente() {
   };
 
   if (id) {
-    await update(ref(database, `clientes/${id}`), cliente);
+    await update(dbRef(database, `clientes/${id}`), cliente);
   } else {
     cliente.fechaRegistro = new Date().toISOString();
-    await push(ref(database, 'clientes'), cliente);
+    await push(dbRef(database, 'clientes'), cliente);
   }
 
   limpiarFormulario();
@@ -78,7 +78,8 @@ async function guardarCliente() {
 // CARGAR CLIENTES
 // =======================
 function cargarClientes() {
-  const clientesRef = ref(database, 'clientes');
+
+  const clientesRef = dbRef(database, 'clientes');
 
   onValue(clientesRef, snapshot => {
 
@@ -125,7 +126,7 @@ function cargarClientes() {
 // =======================
 window.editarCliente = async function (id) {
 
-  const snapshot = await get(ref(database, `clientes/${id}`));
+  const snapshot = await get(dbRef(database, `clientes/${id}`));
   if (!snapshot.exists()) return;
 
   const c = snapshot.val();
@@ -146,7 +147,7 @@ window.editarCliente = async function (id) {
 // =======================
 window.borrarCliente = async function (id, nombre) {
   if (!confirm(`¿Borrar a ${nombre}?`)) return;
-  await remove(ref(database, `clientes/${id}`));
+  await remove(dbRef(database, `clientes/${id}`));
 };
 
 // =======================
@@ -157,8 +158,3 @@ function limpiarFormulario() {
   inputClienteID.value = '';
   btnCancelarCliente.style.display = 'none';
 }
-
-
-
-
-
