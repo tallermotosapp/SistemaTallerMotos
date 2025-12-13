@@ -1,17 +1,15 @@
-// js/clientes.js
-import { __PRUEBA__ } from '../firebase_config.js';
-console.log(__PRUEBA__);
+import {
+  database,
+  ref,
+  push,
+  set,
+  get,
+  update,
+  remove,
+  onValue
+} from '../firebase_config.js';
 
-//import {
- // database,
- // ref,
- // push,
- // set,
- // get,
- // update,
- // remove,
- // onValue
-//} from '../firebase_config.js';
+console.log('ref:', ref);
 
 // =======================
 // VARIABLES
@@ -159,6 +157,7 @@ function limpiarFormulario() {
   inputClienteID.value = '';
   btnCancelarCliente.style.display = 'none';
 }
+
 
 
 
