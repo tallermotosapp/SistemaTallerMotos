@@ -6,15 +6,19 @@
     <title>Sistema de Taller</title>
     
     <link rel="stylesheet" href="css/estilos.css">
+    <button onclick="logout()">Cerrar sesión</button>
+
+<script>
+function logout() {
+    localStorage.removeItem('userSession');
+    sessionStorage.removeItem('userSession');
+    window.location.replace('login.html');
+}
+</script>
+
 
     <style>
-        <script>
-    const session = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
-
-    if (!session) {
-        window.location.replace('login.html');
-    }
-</script>
+    
 
         body {
             /* ¡¡AQUÍ ESTÁ TU IMAGEN!! */
@@ -108,3 +112,4 @@
 </body>
 
 </html>
+
