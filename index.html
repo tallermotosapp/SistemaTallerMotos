@@ -8,6 +8,14 @@
     <link rel="stylesheet" href="css/estilos.css">
 
     <style>
+        <script>
+    const session = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
+
+    if (!session) {
+        window.location.replace('login.html');
+    }
+</script>
+
         body {
             /* ¡¡AQUÍ ESTÁ TU IMAGEN!! */
             /* Asegúrate de que se llame 'taller_fondo.jpg' en la carpeta 'img' */
@@ -98,4 +106,5 @@
     </div>
 
 </body>
+
 </html>
