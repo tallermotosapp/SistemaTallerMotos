@@ -1,28 +1,29 @@
 /* =========================================
-   PALETA DE COLORES Y VARIABLES
+   PALETA DE COLORES AZUL PROFESIONAL
    ========================================= */
 :root {
-    --bg-body: #FDFBF7;      /* Blanco crema muy suave */
-    --bg-card: #FFFFFF;      /* Blanco puro */
-    --primary: #8D6E63;      /* Café Moca (Botones/Header) */
-    --primary-dark: #5D4037; /* Café Oscuro (Hover) */
-    --text-main: #3E2723;    /* Texto principal (Casi negro) */
-    --text-light: #795548;   /* Texto secundario */
-    --border: #EFEBE9;       /* Bordes muy sutiles */
-    --shadow: 0 10px 30px rgba(62, 39, 35, 0.05); /* Sombra elegante */
+    --bg-body: #F5F7FA;          /* Gris azulado muy claro */
+    --bg-card: #FFFFFF;          /* Blanco puro */
+    --primary: #1976D2;          /* Azul Material Design */
+    --primary-dark: #0D47A1;     /* Azul oscuro */
+    --primary-light: #42A5F5;    /* Azul claro */
+    --text-main: #263238;        /* Gris azulado oscuro */
+    --text-light: #546E7A;       /* Gris azulado medio */
+    --border: #E3F2FD;           /* Azul muy suave */
+    --shadow: 0 10px 30px rgba(25, 118, 210, 0.08);
     
-    /* Colores semánticos (suaves) */
-    --success: #66BB6A;      /* Verde suave */
-    --danger: #EF5350;       /* Rojo suave */
-    --info: #42A5F5;         /* Azul suave */
-    --warning: #FFA726;      /* Naranja suave */
+    /* Colores semánticos */
+    --success: #4CAF50;          /* Verde */
+    --danger: #F44336;           /* Rojo */
+    --info: #2196F3;             /* Azul info */
+    --warning: #FF9800;          /* Naranja */
 }
 
 /* =========================================
    ESTILOS GENERALES
    ========================================= */
 body {
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
     background-color: var(--bg-body);
     color: var(--text-main);
     margin: 0;
@@ -31,97 +32,80 @@ body {
 }
 
 /* =========================================
-   HEADER Y NAVEGACIÓN (LOGO GRANDE EN ESQUINA + COMPACTO)
+   HEADER Y NAVEGACIÓN
    ========================================= */
 header.main-header {
-    background-color: var(--bg-card);
-    border-bottom: 3px solid var(--primary);
-    padding: 10px 0; /* Más compacto arriba y abajo del header */
-    margin-bottom: 25px; /* Menos espacio con el contenido principal */
-    box-shadow: var(--shadow);
+    background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+    border-bottom: none;
+    padding: 15px 0;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(25, 118, 210, 0.2);
 }
 
 .header-content {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
-    position: relative;
-    /* Esto es clave: si solo tiene el logo y el h1, se ajustará */
-    display: flex; /* Usamos flex para centrar h1 más fácil */
-    flex-direction: column; /* Apila el título y la navegación */
-    align-items: center; /* Centra horizontalmente el h1 y la nav */
-    justify-content: center; /* Centra verticalmente si hay espacio */
-    min-height: 110px; /* Altura mínima para el logo + un poco de padding vertical */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-/* El Logo (Grande en la esquina) */
-.logo-img {
-    position: absolute; /* Lo sacamos del flujo normal */
-    left: 0;            /* Pegado a la izquierda */
-    top: 50%;           /* Centrado verticalmente dentro de .header-content */
-    transform: translateY(-50%); /* Ajuste fino para centrar */
-    height: 150px;      /* ¡LOGO GRANDE! */
-    width: auto;
-    object-fit: contain;
-    z-index: 10;
+.brand-container {
+    text-align: center;
 }
 
 header h1 {
     font-weight: 700;
-    letter-spacing: 1.5px; /* Ajuste para un look más compacto */
-    margin: 0 0 5px 0; /* Menos margen inferior del título */
+    letter-spacing: 1px;
+    margin: 0 0 15px 0;
     text-transform: uppercase;
-    font-size: 1.9rem; /* Un poco más pequeño para ser compacto */
-    color: var(--primary-dark);
-    text-align: center;
-    z-index: 1;
-    line-height: 1.2;
-    padding-left: 100px; /* Ajuste para que el texto no se superponga al logo */
-    padding-right: 100px; /* Simétrico al padding-left */
-    box-sizing: border-box; /* Para que el padding no desborde */
+    font-size: 2rem;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Navegación Compacta */
+/* Navegación */
 .taller-nav {
     display: flex;
     justify-content: center;
-    gap: 8px; /* Menos espacio entre botones */
-    margin-top: 5px; /* Más cerca del título */
-    padding-top: 5px; /* Un poco de padding para separar visualmente */
-    border-top: 1px solid var(--border); /* Línea sutil de separación */
-    width: fit-content; /* Para que la línea se ajuste al ancho de los botones */
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
 }
 
 .nav-link {
-    color: var(--text-light);
-    background-color: #FAFAFA;
-    padding: 7px 18px; /* Botones más compactos */
+    color: white;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 10px 20px;
     text-decoration: none;
     font-weight: 600;
-    border-radius: 50px;
-    font-size: 0.88rem; /* Letra un poco más chica */
+    border-radius: 25px;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
-    border: 1px solid var(--border);
+    border: 2px solid transparent;
+    backdrop-filter: blur(10px);
 }
 
 .nav-link:hover {
-    color: white;
-    background-color: var(--primary);
+    background-color: rgba(255, 255, 255, 0.25);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(141, 110, 99, 0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .nav-link.active {
-    background-color: var(--primary-dark);
-    color: white;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+    background-color: white;
+    color: var(--primary);
+    border-color: white;
+    box-shadow: 0 4px 12px rgba(255,255,255,0.3);
 }
 
 /* =========================================
    CONTENEDORES Y TARJETAS
    ========================================= */
 main {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -129,17 +113,17 @@ main {
 section {
     background-color: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 40px;
-    margin-bottom: 30px;
+    border-radius: 12px;
+    padding: 35px;
+    margin-bottom: 25px;
     box-shadow: var(--shadow);
 }
 
 h2 {
     color: var(--primary-dark);
-    font-size: 1.5rem;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 15px;
+    font-size: 1.6rem;
+    border-bottom: 3px solid var(--border);
+    padding-bottom: 12px;
     margin-bottom: 25px;
     font-weight: 700;
 }
@@ -163,9 +147,9 @@ form {
 
 input, select, textarea {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #D7CCC8;
-    background-color: #FAFAFA;
+    padding: 13px 16px;
+    border: 2px solid #E1F5FE;
+    background-color: #F8FBFF;
     border-radius: 8px;
     font-size: 1rem;
     color: var(--text-main);
@@ -177,51 +161,49 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus {
     border-color: var(--primary);
     background-color: #fff;
-    box-shadow: 0 0 0 4px rgba(141, 110, 99, 0.1);
+    box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
+}
+
+input::placeholder {
+    color: #90A4AE;
 }
 
 /* =========================================
    BOTONES
    ========================================= */
 button, .btn-volver, input[type="submit"] {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     color: white;
     border: none;
-    padding: 12px 25px;
-    border-radius: 50px;
+    padding: 12px 28px;
+    border-radius: 25px;
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    box-shadow: 0 4px 6px rgba(141, 110, 99, 0.2);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
 }
 
 button:hover, input[type="submit"]:hover, .btn-volver:hover {
-    background-color: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(141, 110, 99, 0.3);
+    box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
 }
 
-/* Botones Específicos */
-button[onclick*="borrar"], button[onclick*="eliminar"], #btn-cancelar-cliente {
-    background-color: white;
-    color: var(--danger);
-    border: 1px solid var(--danger);
-    box-shadow: none;
-}
-button[onclick*="borrar"]:hover, #btn-cancelar-cliente:hover {
-    background-color: var(--danger);
-    color: white;
+button:active {
+    transform: translateY(0);
 }
 
-button[onclick*="verMotos"], button[onclick*="verHistorial"] {
-    background-color: var(--info);
-    color: white;
+/* Botones de acción específicos */
+button[onclick*="borrar"], 
+button[onclick*="eliminar"] {
+    background: linear-gradient(135deg, #F44336 0%, #E53935 100%);
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
 }
-button[onclick*="verMotos"]:hover, button[onclick*="verHistorial"]:hover {
-    background-color: #1E88E5;
+
+button[onclick*="borrar"]:hover {
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
 }
 
 /* =========================================
@@ -234,82 +216,163 @@ table {
     background-color: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 0 10px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 th {
-    background-color: #F5F5F5;
-    color: var(--text-light);
+    background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+    color: var(--primary-dark);
     font-weight: 700;
     text-transform: uppercase;
     font-size: 0.85rem;
-    padding: 18px;
+    padding: 16px;
     text-align: left;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 2px solid var(--primary-light);
 }
 
 td {
-    padding: 15px 18px;
-    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+    border-bottom: 1px solid #F5F5F5;
     color: var(--text-main);
     font-size: 0.95rem;
 }
 
-tr:last-child td { border-bottom: none; }
-tr:hover { background-color: #FAFAFA; }
+tr:last-child td { 
+    border-bottom: none; 
+}
+
+tr:hover { 
+    background-color: #F8FBFF;
+    transition: background-color 0.2s;
+}
 
 /* =========================================
-   VENTANA MODAL
+   BADGES Y ETIQUETAS
+   ========================================= */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.badge-success {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+}
+
+.badge-danger {
+    background-color: #FFEBEE;
+    color: #C62828;
+}
+
+.badge-warning {
+    background-color: #FFF3E0;
+    color: #E65100;
+}
+
+.badge-info {
+    background-color: #E3F2FD;
+    color: #1565C0;
+}
+
+/* =========================================
+   MODAL
    ========================================= */
 .modal {
-    background-color: rgba(62, 39, 35, 0.6);
+    background-color: rgba(13, 71, 161, 0.5);
     backdrop-filter: blur(4px);
 }
 
 .modal-content {
-    border-radius: 20px;
+    border-radius: 16px;
     border: none;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+    padding: 35px;
 }
 
 .close {
     color: var(--text-light);
-    opacity: 0.5;
-    transition: opacity 0.2s;
+    opacity: 0.6;
+    transition: all 0.2s;
     font-size: 2rem;
-    line-height: 0.8;
 }
+
 .close:hover {
     opacity: 1;
     color: var(--primary);
 }
 
 /* =========================================
-   UTILIDADES Y BADGES
+   UTILIDADES
    ========================================= */
 .total-final {
     color: var(--primary-dark) !important;
     font-size: 1.8em !important;
+    font-weight: 700 !important;
 }
 
-/* Etiquetas de estado (Badges) */
-span[style*="color:green"], b[style*="color:green"] {
-    background-color: #E8F5E9;
-    color: #2E7D32 !important;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.85em;
-    font-weight: 700;
-    display: inline-block;
+.text-center {
+    text-align: center;
 }
 
-span[style*="color:red"], b[style*="color:red"] {
-    background-color: #FFEBEE;
-    color: #C62828 !important;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 0.85em;
-    font-weight: 700;
-    display: inline-block;
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .taller-nav {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .nav-link {
+        width: 100%;
+        text-align: center;
+    }
+    
+    section {
+        padding: 20px;
+    }
+    
+    table {
+        font-size: 0.85rem;
+    }
+    
+    th, td {
+        padding: 10px 8px;
+    }
+}
+
+/* =========================================
+   ANIMACIONES
+   ========================================= */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.slide-up {
+    animation: slideUp 0.5s ease-out;
 }
