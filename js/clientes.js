@@ -1,5 +1,5 @@
 // ============================================
-// CLIENTES - VERSIÓN FIREBASE
+// CLIENTES - VERSIÓN FIREBASE (CORREGIDA)
 // ============================================
 
 import { 
@@ -13,8 +13,9 @@ import {
     onValue,
     verificarAutenticacion,
     obtenerUsuarioActual,
-    formatearFecha
-} from './firebase-config.js';
+    formatearFecha,
+    cerrarSesion
+} from '../firebase-config.js';
 
 // Variables globales
 let clientesCache = [];
@@ -28,7 +29,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         await verificarAutenticacion();
         mostrarUsuarioActual();
     } catch (error) {
-        return; // Redirige a login automáticamente
+        console.log('No autenticado, redirigiendo...');
+        return;
     }
     
     // Elementos del DOM
@@ -53,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function mostrarUsuarioActual() {
     const usuario = obtenerUsuarioActual();
     if (usuario) {
-        console.log(`Usuario: ${usuario.nombre} (${usuario.rol})`);
+        console.log(`✅ Usuario: ${usuario.nombre} (${usuario.rol})`);
     }
 }
 
@@ -89,11 +91,11 @@ function cargarClientesRealTime() {
                 tbody.innerHTML += fila;
             });
         } else {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#999;">No hay clientes registrados. Agrega el primero.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:#999;">No hay clientes registrados. Agrega el primero.</td></tr>';
         }
     }, (error) => {
-        console.error('Error al cargar clientes:', error);
-        alert('Error al cargar datos. Verifica tu conexión.');
+        console.error('❌ Error al cargar clientes:', error);
+        alert('Error al cargar datos. Verifica tu conexión a Firebase.');
     });
 }
 
@@ -101,44 +103,42 @@ function cargarClientesRealTime() {
 // CREAR FILA DE CLIENTE
 // ============================================
 function crearFilaCliente(cliente) {
-    const fecha = cliente.fecha_registro ? formatearFecha(cliente.fecha_registro) : '---';
+    const fechaRegistro = cliente.fecha_registro ? formatearFecha(cliente.fecha_registro) : '---';
+    const fechaCita = cliente.fecha_cita || '---';
+    const horaCita = cliente.hora_cita || '---';
     
     return `
         <tr>
-            <td>${cliente.id.substring(0, 8)}...</td>
-            <td><small>${fecha}</small></td>
-            <td>${cliente.nombre}</td>
-            <td>${cliente.apellido}</td>
+            <td><small>${fechaRegistro}</small></td>
+            <td><strong>${cliente.nombre} ${cliente.apellido}</strong></td>
             <td>${cliente.telefono || '---'}</td>
-            <td>${cliente.email || '---'}</td>
+            <td>${cliente.placa || '---'}</td>
+            <td>${cliente.modelo_moto || '---'}</td>
+            <td>${fechaCita}</td>
+            <td>${horaCita}</td>
             <td>
-                <button onclick="window.verMotos('${cliente.id}')" style="background-color: #4CAF50; color: white; margin-bottom:5px;">
-                    🏍️ Motos
-                </button>
-                <button onclick="window.verHistorialOrdenes('${cliente.id}')" style="background-color: #2196F3; color: white; margin-bottom:5px;">
-                    📋 Historial
-                </button>
-                <br>
-                <button onclick="window.editarCliente('${cliente.id}')">✏️ Editar</button>
-                <button onclick="window.borrarCliente('${cliente.id}', '${cliente.nombre} ${cliente.apellido}')" style="background-color: #f44336; color: white;">🗑️ Borrar</button>
+                <button onclick="window.editarCliente('${cliente.id}')" style="background-color: #2196F3;">✏️ Editar</button>
+                <button onclick="window.borrarCliente('${cliente.id}', '${cliente.nombre} ${cliente.apellido}')" style="background-color: #f44336;">🗑️ Borrar</button>
             </td>
         </tr>
     `;
 }
 
 // ============================================
-// GUARDAR CLIENTE
+// GUARDAR CLIENTE (CORREGIDO)
 // ============================================
 async function guardarCliente() {
     const nombre = document.getElementById('cliente-nombre').value.trim();
     const apellido = document.getElementById('cliente-apellido').value.trim();
     const telefono = document.getElementById('cliente-telefono').value.trim();
-    const email = document.getElementById('cliente-email').value.trim();
-    const direccion = document.getElementById('cliente-direccion').value.trim();
+    const placa = document.getElementById('cliente-placa').value.trim();
+    const modeloMoto = document.getElementById('cliente-modelo').value.trim();
+    const fechaCita = document.getElementById('cliente-fecha-cita').value;
+    const horaCita = document.getElementById('cliente-hora-cita').value;
     const clienteId = document.getElementById('cliente-id').value;
     
     if (!nombre || !apellido) {
-        alert('Nombre y apellido son obligatorios');
+        alert('⚠️ Nombre y apellido son obligatorios');
         return;
     }
     
@@ -146,8 +146,10 @@ async function guardarCliente() {
         nombre,
         apellido,
         telefono,
-        email,
-        direccion,
+        placa,
+        modelo_moto: modeloMoto,
+        fecha_cita: fechaCita,
+        hora_cita: horaCita,
         fecha_actualizacion: new Date().toISOString()
     };
     
@@ -163,6 +165,7 @@ async function guardarCliente() {
             const nuevoClienteRef = push(clientesRef);
             
             datosCliente.fecha_registro = new Date().toISOString();
+            
             await set(nuevoClienteRef, datosCliente);
             
             alert('✅ Cliente creado correctamente');
@@ -170,7 +173,7 @@ async function guardarCliente() {
         
         resetFormulario();
     } catch (error) {
-        console.error('Error al guardar cliente:', error);
+        console.error('❌ Error al guardar cliente:', error);
         alert('❌ Error al guardar: ' + error.message);
     }
 }
@@ -189,8 +192,10 @@ window.editarCliente = async function(clienteId) {
             document.getElementById('cliente-nombre').value = cliente.nombre;
             document.getElementById('cliente-apellido').value = cliente.apellido;
             document.getElementById('cliente-telefono').value = cliente.telefono || '';
-            document.getElementById('cliente-email').value = cliente.email || '';
-            document.getElementById('cliente-direccion').value = cliente.direccion || '';
+            document.getElementById('cliente-placa').value = cliente.placa || '';
+            document.getElementById('cliente-modelo').value = cliente.modelo_moto || '';
+            document.getElementById('cliente-fecha-cita').value = cliente.fecha_cita || '';
+            document.getElementById('cliente-hora-cita').value = cliente.hora_cita || '';
             document.getElementById('cliente-id').value = clienteId;
             
             document.querySelector('#form-cliente h3').innerText = '✏️ Editando Cliente';
@@ -200,7 +205,7 @@ window.editarCliente = async function(clienteId) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     } catch (error) {
-        console.error('Error al cargar cliente:', error);
+        console.error('❌ Error al cargar cliente:', error);
         alert('Error al cargar datos del cliente');
     }
 }
@@ -209,113 +214,18 @@ window.editarCliente = async function(clienteId) {
 // BORRAR CLIENTE
 // ============================================
 window.borrarCliente = async function(clienteId, nombreCompleto) {
-    if (!confirm(`¿Estás seguro de borrar a ${nombreCompleto}?\n\n⚠️ Esto también borrará sus motos y órdenes asociadas.`)) {
+    if (!confirm(`¿Estás seguro de borrar a ${nombreCompleto}?`)) {
         return;
     }
     
     try {
-        // Borrar cliente
         const clienteRef = ref(database, `clientes/${clienteId}`);
         await remove(clienteRef);
         
-        // TODO: Borrar motos y órdenes asociadas (lo haremos en el siguiente módulo)
-        
         alert('✅ Cliente borrado correctamente');
     } catch (error) {
-        console.error('Error al borrar cliente:', error);
+        console.error('❌ Error al borrar cliente:', error);
         alert('❌ Error al borrar: ' + error.message);
-    }
-}
-
-// ============================================
-// VER MOTOS
-// ============================================
-window.verMotos = function(clienteId) {
-    window.location.href = `motos.html?id_cliente=${clienteId}`;
-}
-
-// ============================================
-// VER HISTORIAL DE ÓRDENES
-// ============================================
-window.verHistorialOrdenes = async function(clienteId) {
-    const modal = document.getElementById('modal-historial');
-    const tbody = document.getElementById('tabla-modal-body');
-    
-    modal.style.display = 'block';
-    tbody.innerHTML = '<tr><td colspan="7">Cargando...</td></tr>';
-    
-    try {
-        // Buscar todas las órdenes de este cliente
-        const ordenesRef = ref(database, 'ordenes');
-        const snapshot = await get(ordenesRef);
-        
-        tbody.innerHTML = '';
-        
-        if (snapshot.exists()) {
-            const ordenes = [];
-            const data = snapshot.val();
-            
-            // Filtrar órdenes de este cliente
-            for (let ordenId in data) {
-                const orden = data[ordenId];
-                if (orden.id_cliente === clienteId) {
-                    ordenes.push({
-                        id: ordenId,
-                        ...orden
-                    });
-                }
-            }
-            
-            if (ordenes.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7">Este cliente no tiene órdenes registradas.</td></tr>';
-                return;
-            }
-            
-            // Ordenar por fecha (más reciente primero)
-            ordenes.sort((a, b) => new Date(b.fecha_ingreso) - new Date(a.fecha_ingreso));
-            
-            // Renderizar
-            ordenes.forEach(orden => {
-                const fecha = formatearFecha(orden.fecha_ingreso);
-                const badgePago = orden.estado_pago === 'Pagado' 
-                    ? '<span style="color:green; font-weight:bold;">✅ PAGADO</span>'
-                    : '<span style="color:red; font-weight:bold;">❌ PENDIENTE</span>';
-                
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${orden.id.substring(0, 8)}...</td>
-                        <td>${fecha}</td>
-                        <td>${orden.placa || '---'}</td>
-                        <td><span style="background:#e3f2fd; padding:5px 10px; border-radius:5px;">${orden.estado}</span></td>
-                        <td>${badgePago}</td>
-                        <td>$${orden.total_orden || 0}</td>
-                        <td>
-                            <a href="orden_detalle.html?id=${orden.id}" target="_blank" 
-                               style="background:#4CAF50; color:white; padding:5px 10px; text-decoration:none; border-radius:5px;">
-                                Ver Detalle
-                            </a>
-                        </td>
-                    </tr>
-                `;
-            });
-        } else {
-            tbody.innerHTML = '<tr><td colspan="7">No hay órdenes en el sistema.</td></tr>';
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        tbody.innerHTML = '<tr><td colspan="7">Error al cargar historial.</td></tr>';
-    }
-}
-
-// Cerrar modal
-window.cerrarModal = function() {
-    document.getElementById('modal-historial').style.display = 'none';
-}
-
-window.onclick = function(event) {
-    const modal = document.getElementById('modal-historial');
-    if (event.target == modal) {
-        modal.style.display = 'none';
     }
 }
 
@@ -330,4 +240,4 @@ function resetFormulario() {
     document.getElementById('btn-cancelar-cliente').style.display = 'none';
 }
 
-console.log('✅ Módulo de Clientes cargado');
+console.log('✅ Módulo de Clientes cargado correctamente');
