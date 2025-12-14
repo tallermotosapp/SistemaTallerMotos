@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/estilos.css">
 
     <style>
-        /* Botones pequeños para la tabla */
+        /* Estilos para botones pequeños en la tabla */
         .btn-accion-sm {
             padding: 5px 10px;
             font-size: 0.85em;
@@ -18,28 +18,26 @@
             border: none;
             color: white;
         }
-
-        .btn-editar { background-color: #FFB74D; }
-        .btn-borrar { background-color: #E57373; }
+        .btn-editar { background-color: #FFB74D; } /* Naranja */
+        .btn-borrar { background-color: #E57373; } /* Rojo */
         
-        /* Área de texto para observaciones */
+        /* Estilo para el área de observación */
         textarea {
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
             resize: vertical;
             font-family: inherit;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
 
-        /* Estilo para la dirección en el header */
+        /* Dirección en el encabezado */
         .brand-address {
             font-size: 0.8rem;
-            color: #E0F7FA; /* Color claro para contrastar con el header */
+            color: #E0F7FA;
             margin: 5px 0 0 0;
             font-weight: normal;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
     </style>
 </head>
@@ -49,9 +47,7 @@
         <div class="header-content">
             <div class="brand-container">
                 <h1>Sistema de Taller</h1>
-                <p class="brand-address">
-                    📍 Cl 63 #14 -76 Cajeto -MotoPro
-                </p>
+                <p class="brand-address">📍 Cl 63 #14 -76 Cajeto -MotoPro</p>
             </div>
             
             <nav class="taller-nav">
@@ -84,10 +80,10 @@
                 </div>
 
                 <div style="width: 100%; margin-top: 10px;">
-                    <textarea id="cliente-observacion" rows="3" placeholder="Observaciones / Trabajo a realizar en la moto"></textarea>
+                    <textarea id="cliente-observacion" rows="2" placeholder="Observaciones / Trabajo a realizar"></textarea>
                 </div>
 
-                <div style="background-color: #E3F2FD; padding: 8px; border-radius: 4px; margin-top: 15px; border-left: 4px solid #2196F3;">
+                <div style="background-color: #E3F2FD; padding: 8px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #2196F3;">
                     <small style="color: #0D47A1; font-weight: bold;">📍 Lugar de la cita:</small>
                     <span style="font-size: 0.9em; color: #333;">Cl 63 #14 -76 Cajeto -MotoPro</span>
                 </div>
@@ -126,13 +122,14 @@
                         <th>Marca</th>
                         <th>Modelo</th>
                         <th>Observación</th>
+                        <th>Lugar</th>
                         <th>Cita</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tabla-clientes-body">
                     <tr>
-                        <td colspan="9" style="text-align:center; padding:30px;">
+                        <td colspan="10" style="text-align:center; padding:30px;">
                             Cargando clientes...
                         </td>
                     </tr>
