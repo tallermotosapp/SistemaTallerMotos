@@ -8,27 +8,38 @@
     <link rel="stylesheet" href="css/estilos.css">
 
     <style>
-        /* Clase para botones de acción pequeños */
+        /* Botones pequeños para la tabla */
         .btn-accion-sm {
-            padding: 5px 10px;       /* Menos relleno */
-            font-size: 0.85em;       /* Letra más pequeña */
-            margin: 0 2px;           /* Separación entre botones */
+            padding: 5px 10px;
+            font-size: 0.85em;
+            margin: 0 2px;
             cursor: pointer;
             border-radius: 4px;
             border: none;
             color: white;
         }
 
-        .btn-editar { background-color: #FFB74D; /* Naranja suave */ }
-        .btn-borrar { background-color: #E57373; /* Rojo suave */ }
+        .btn-editar { background-color: #FFB74D; }
+        .btn-borrar { background-color: #E57373; }
         
-        /* Estilo para el área de observación */
+        /* Área de texto para observaciones */
         textarea {
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
-            resize: vertical; /* Permite estirar hacia abajo */
+            resize: vertical;
             font-family: inherit;
+        }
+
+        /* Estilo para la dirección en el header */
+        .brand-address {
+            font-size: 0.8rem;
+            color: #E0F7FA; /* Color claro para contrastar con el header */
+            margin: 5px 0 0 0;
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
     </style>
 </head>
@@ -38,6 +49,9 @@
         <div class="header-content">
             <div class="brand-container">
                 <h1>Sistema de Taller</h1>
+                <p class="brand-address">
+                    📍 Cl 63 #14 -76 Cajeto -MotoPro
+                </p>
             </div>
             
             <nav class="taller-nav">
@@ -65,11 +79,17 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; width: 100%; margin-top: 10px;">
                     <input type="text" id="cliente-placa" placeholder="Placa">
-                    <input type="text" id="cliente-marca" placeholder="Marca (Ej: Yamaha)"> <input type="text" id="cliente-modelo" placeholder="Modelo / Referencia">
+                    <input type="text" id="cliente-marca" placeholder="Marca (Ej: Yamaha)">
+                    <input type="text" id="cliente-modelo" placeholder="Modelo">
                 </div>
 
                 <div style="width: 100%; margin-top: 10px;">
                     <textarea id="cliente-observacion" rows="3" placeholder="Observaciones / Trabajo a realizar en la moto"></textarea>
+                </div>
+
+                <div style="background-color: #E3F2FD; padding: 8px; border-radius: 4px; margin-top: 15px; border-left: 4px solid #2196F3;">
+                    <small style="color: #0D47A1; font-weight: bold;">📍 Lugar de la cita:</small>
+                    <span style="font-size: 0.9em; color: #333;">Cl 63 #14 -76 Cajeto -MotoPro</span>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 10px;">
@@ -103,8 +123,10 @@
                         <th>Cliente</th>
                         <th>Teléfono</th>
                         <th>Placa</th>
-                        <th>Marca</th> <th>Modelo</th>
-                        <th>Observación</th> <th>Cita</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Observación</th>
+                        <th>Cita</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
