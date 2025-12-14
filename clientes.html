@@ -6,45 +6,6 @@
     <title>Gestión de Clientes - Sistema Taller</title>
     
     <link rel="stylesheet" href="css/estilos.css">
-
-    <style>
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(30, 60, 114, 0.6);
-            backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 30px;
-            border: none;
-            width: 90%; 
-            max-width: 900px;
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .close:hover { color: #2196F3; }
-    </style>
 </head>
 <body>
 
@@ -69,16 +30,35 @@
             
             <form id="form-cliente">
                 <h3>Agregar Cliente</h3>
-                <input type="text" id="cliente-nombre" placeholder="Nombre *" required>
-                <input type="text" id="cliente-apellido" placeholder="Apellido *" required>
-                <input type="tel" id="cliente-telefono" placeholder="Teléfono">
-                <input type="email" id="cliente-email" placeholder="Email">
-                <input type="text" id="cliente-direccion" placeholder="Dirección">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;">
+                    <input type="text" id="cliente-nombre" placeholder="Nombre *" required>
+                    <input type="text" id="cliente-apellido" placeholder="Apellido *" required>
+                </div>
+
+                <input type="tel" id="cliente-telefono" placeholder="Teléfono" style="width: 100%;">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;">
+                    <input type="text" id="cliente-placa" placeholder="Placa de la Moto">
+                    <input type="text" id="cliente-modelo" placeholder="Modelo de la Moto">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;">
+                    <div>
+                        <label for="cliente-fecha-cita" style="font-size: 0.9em; color: #546E7A; display: block; margin-bottom: 5px;">📅 Fecha de Cita:</label>
+                        <input type="date" id="cliente-fecha-cita">
+                    </div>
+                    <div>
+                        <label for="cliente-hora-cita" style="font-size: 0.9em; color: #546E7A; display: block; margin-bottom: 5px;">🕐 Hora de Cita:</label>
+                        <input type="time" id="cliente-hora-cita">
+                    </div>
+                </div>
+
                 <input type="hidden" id="cliente-id">
                 
                 <div style="width: 100%; margin-top: 10px;">
-                    <button type="submit">Guardar Cliente</button>
-                    <button type="button" id="btn-cancelar-cliente" style="display:none; background-color: #EF5350;">Cancelar Edición</button>
+                    <button type="submit">💾 Guardar Cliente</button>
+                    <button type="button" id="btn-cancelar-cliente" style="display:none; background-color: #EF5350;">❌ Cancelar</button>
                 </div>
             </form>
 
@@ -90,18 +70,19 @@
             <table border="0">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Fecha Registro</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
+                        <th>Nombre Completo</th>
                         <th>Teléfono</th>
-                        <th>Email</th>
+                        <th>Placa</th>
+                        <th>Modelo Moto</th>
+                        <th>Fecha Cita</th>
+                        <th>Hora Cita</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tabla-clientes-body">
                     <tr>
-                        <td colspan="7" style="text-align:center; padding:30px;">
+                        <td colspan="8" style="text-align:center; padding:30px;">
                             Cargando clientes...
                         </td>
                     </tr>
@@ -109,31 +90,6 @@
             </table>
         </section>
     </main>
-
-    <!-- MODAL HISTORIAL -->
-    <div id="modal-historial" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="cerrarModal()">&times;</span>
-            <h2 style="color: #1976D2; border-bottom: 2px solid #BBDEFB; padding-bottom: 10px;">
-                📋 Historial de Órdenes
-            </h2>
-            <table style="width:100%">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Fecha</th>
-                        <th>Moto (Placa)</th>
-                        <th>Estado</th>
-                        <th>Pago</th>
-                        <th>Total</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-modal-body">
-                </tbody>
-            </table>
-        </div>
-    </div>
 
     <script type="module" src="js/clientes.js"></script>
 </body>
