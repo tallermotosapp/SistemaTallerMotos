@@ -60,7 +60,6 @@ function calcularEstadisticas(data) {
         if (cliente.fecha_cita && cliente.hora_cita) {
             const fechaCita = new Date(cliente.fecha_cita);
             
-            // Citas de hoy
             if (cliente.fecha_cita === hoy) {
                 citasHoy++;
                 
@@ -72,7 +71,6 @@ function calcularEstadisticas(data) {
                 }
             }
             
-            // Citas del mes
             if (fechaCita.getMonth() === mesActual && fechaCita.getFullYear() === anioActual) {
                 citasMes++;
             }
@@ -103,19 +101,21 @@ window.exportarClientes = async function() {
         
         Object.keys(data).forEach(key => {
             const cliente = data[key];
-            clientes.push({
-                'Nombre': cliente.nombre,
-                'Apellido': cliente.apellido,
-                'Teléfono': cliente.telefono || '',
-                'Placa': cliente.placa || '',
-                'Modelo Moto': cliente.modelo_moto || '',
-                'Fecha Cita': cliente.fecha_cita || '',
-                'Hora Cita': cliente.hora_cita || '',
-                'Fecha Registro': cliente.fecha_registro ? new Date(cliente.fecha_registro).toLocaleDateString('es-CO') : ''
-            });
+            clientes.push([
+                cliente.nombre,
+                cliente.apellido,
+                cliente.telefono || '',
+                cliente.placa || '',
+                cliente.modelo_moto || '',
+                cliente.fecha_cita || '',
+                cliente.hora_cita || '',
+                cliente.fecha_registro ? new Date(cliente.fecha_registro).toLocaleDateString('es-CO') : ''
+            ]);
         });
         
-        descargarCSV(clientes, 'Clientes_' + new Date().toISOString().split('T')[0]);
+        const headers = ['Nombre', 'Apellido', 'Teléfono', 'Placa', 'Modelo Moto', 'Fecha Cita', 'Hora Cita', 'Fecha Registro'];
+        
+        descargarExcel(clientes, headers, 'Clientes_' + new Date().toISOString().split('T')[0]);
         
     } catch (error) {
         console.error('Error:', error);
@@ -143,14 +143,14 @@ window.exportarCitas = async function() {
             const cliente = data[key];
             
             if (cliente.fecha_cita && cliente.hora_cita) {
-                citas.push({
-                    'Fecha': cliente.fecha_cita,
-                    'Hora': cliente.hora_cita,
-                    'Cliente': `${cliente.nombre} ${cliente.apellido}`,
-                    'Teléfono': cliente.telefono || '',
-                    'Placa': cliente.placa || '',
-                    'Modelo': cliente.modelo_moto || ''
-                });
+                citas.push([
+                    cliente.fecha_cita,
+                    cliente.hora_cita,
+                    `${cliente.nombre} ${cliente.apellido}`,
+                    cliente.telefono || '',
+                    cliente.placa || '',
+                    cliente.modelo_moto || ''
+                ]);
             }
         });
         
@@ -161,13 +161,15 @@ window.exportarCitas = async function() {
         
         // Ordenar por fecha y hora
         citas.sort((a, b) => {
-            if (a.Fecha === b.Fecha) {
-                return a.Hora.localeCompare(b.Hora);
+            if (a[0] === b[0]) {
+                return a[1].localeCompare(b[1]);
             }
-            return a.Fecha.localeCompare(b.Fecha);
+            return a[0].localeCompare(b[0]);
         });
         
-        descargarCSV(citas, 'Citas_' + new Date().toISOString().split('T')[0]);
+        const headers = ['Fecha', 'Hora', 'Cliente', 'Teléfono', 'Placa', 'Modelo'];
+        
+        descargarExcel(citas, headers, 'Citas_' + new Date().toISOString().split('T')[0]);
         
     } catch (error) {
         console.error('Error:', error);
@@ -193,20 +195,22 @@ window.exportarTodo = async function() {
         
         Object.keys(data).forEach(key => {
             const cliente = data[key];
-            datosCompletos.push({
-                'ID': key.substring(0, 8),
-                'Nombre Completo': `${cliente.nombre} ${cliente.apellido}`,
-                'Teléfono': cliente.telefono || '',
-                'Placa Moto': cliente.placa || '',
-                'Modelo Moto': cliente.modelo_moto || '',
-                'Fecha Cita': cliente.fecha_cita || 'Sin cita',
-                'Hora Cita': cliente.hora_cita || '',
-                'Fecha Registro': cliente.fecha_registro ? new Date(cliente.fecha_registro).toLocaleDateString('es-CO') : '',
-                'Última Actualización': cliente.fecha_actualizacion ? new Date(cliente.fecha_actualizacion).toLocaleDateString('es-CO') : ''
-            });
+            datosCompletos.push([
+                key.substring(0, 8),
+                `${cliente.nombre} ${cliente.apellido}`,
+                cliente.telefono || '',
+                cliente.placa || '',
+                cliente.modelo_moto || '',
+                cliente.fecha_cita || 'Sin cita',
+                cliente.hora_cita || '',
+                cliente.fecha_registro ? new Date(cliente.fecha_registro).toLocaleDateString('es-CO') : '',
+                cliente.fecha_actualizacion ? new Date(cliente.fecha_actualizacion).toLocaleDateString('es-CO') : ''
+            ]);
         });
         
-        descargarCSV(datosCompletos, 'Reporte_Completo_' + new Date().toISOString().split('T')[0]);
+        const headers = ['ID', 'Nombre Completo', 'Teléfono', 'Placa Moto', 'Modelo Moto', 'Fecha Cita', 'Hora Cita', 'Fecha Registro', 'Última Actualización'];
+        
+        descargarExcel(datosCompletos, headers, 'Reporte_Completo_' + new Date().toISOString().split('T')[0]);
         
     } catch (error) {
         console.error('Error:', error);
@@ -215,46 +219,57 @@ window.exportarTodo = async function() {
 }
 
 // ============================================
-// FUNCIÓN PARA DESCARGAR CSV
+// FUNCIÓN PARA DESCARGAR EXCEL (FORMATO CORRECTO)
 // ============================================
-function descargarCSV(datos, nombreArchivo) {
+function descargarExcel(datos, headers, nombreArchivo) {
     if (datos.length === 0) {
         alert('No hay datos para exportar');
         return;
     }
     
-    // Obtener headers
-    const headers = Object.keys(datos[0]);
+    // Crear CSV con formato correcto para Excel
+    let csv = '\uFEFF'; // BOM para UTF-8
     
-    // Crear filas CSV
-    let csv = headers.join(',') + '\n';
+    // Agregar headers
+    csv += headers.map(h => escaparCSV(h)).join('\t') + '\n';
     
+    // Agregar datos
     datos.forEach(fila => {
-        const valores = headers.map(header => {
-            let valor = fila[header];
-            // Escapar comillas y comas
-            if (typeof valor === 'string' && (valor.includes(',') || valor.includes('"'))) {
-                valor = `"${valor.replace(/"/g, '""')}"`;
-            }
-            return valor;
-        });
-        csv += valores.join(',') + '\n';
+        csv += fila.map(valor => escaparCSV(valor)).join('\t') + '\n';
     });
     
     // Crear Blob y descargar
-    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csv], { type: 'text/tab-separated-values;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     
     link.setAttribute('href', url);
-    link.setAttribute('download', nombreArchivo + '.csv');
+    link.setAttribute('download', nombreArchivo + '.xls');
     link.style.visibility = 'hidden';
     
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
-    alert('✅ Archivo descargado correctamente');
+    alert('✅ Archivo descargado correctamente\n\n💡 Consejo: Abre con Excel o Google Sheets');
+}
+
+// ============================================
+// ESCAPAR VALORES PARA CSV
+// ============================================
+function escaparCSV(valor) {
+    if (valor === null || valor === undefined) {
+        return '';
+    }
+    
+    valor = String(valor);
+    
+    // Si contiene tabulador, comilla o salto de línea, envolver en comillas
+    if (valor.includes('\t') || valor.includes('"') || valor.includes('\n')) {
+        valor = '"' + valor.replace(/"/g, '""') + '"';
+    }
+    
+    return valor;
 }
 
 console.log('✅ Módulo de Reportes cargado');
