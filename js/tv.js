@@ -59,6 +59,13 @@ function cargarDatos() {
             const data = snapshot.val();
             procesarDatos(data);
             actualizarUltimaActualizacion();
+        } else {
+            // Si no hay datos, mostrar ceros
+            document.getElementById('citas-hoy').textContent = '0';
+            document.getElementById('proximas').textContent = '0';
+            document.getElementById('completadas').textContent = '0';
+            document.getElementById('clientes-total').textContent = '0';
+            document.getElementById('lista-citas').innerHTML = '<div class="sin-citas">No hay citas programadas para hoy</div>';
         }
     });
 }
@@ -83,14 +90,14 @@ function procesarDatos(data) {
         if (cliente.fecha_cita && cliente.hora_cita) {
             if (cliente.fecha_cita === hoy) {
                 const [hora, minuto] = cliente.hora_cita.split(':').map(Number);
-                const minutosC ita = hora * 60 + minuto;
+                const minutosCita = hora * 60 + minuto;
                 
                 citasHoy.push({
                     nombre: `${cliente.nombre} ${cliente.apellido}`,
-                    telefono: cliente.telefono,
+                    telefono: cliente.telefono || 'Sin teléfono',
                     hora: cliente.hora_cita,
-                    placa: cliente.placa,
-                    modelo: cliente.modelo_moto,
+                    placa: cliente.placa || 'Sin placa',
+                    modelo: cliente.modelo_moto || 'Sin modelo',
                     minutos: minutosCita
                 });
                 
@@ -143,9 +150,9 @@ function renderizarCitas(citas) {
             <div class="cita-hora">🕐 ${cita.hora}</div>
             <div class="cita-info">
                 <div class="nombre">👤 ${cita.nombre}</div>
-                <div class="detalles">🏍️ ${cita.placa || 'Sin placa'} - ${cita.modelo || 'Sin modelo'}</div>
+                <div class="detalles">🏍️ ${cita.placa} - ${cita.modelo}</div>
             </div>
-            <div class="cita-telefono">📞 ${cita.telefono || 'Sin teléfono'}</div>
+            <div class="cita-telefono">📞 ${cita.telefono}</div>
         `;
         
         listaCitas.appendChild(citaDiv);
