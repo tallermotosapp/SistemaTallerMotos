@@ -18,7 +18,6 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            padding: 0;
         }
 
         .menu-container {
@@ -27,64 +26,40 @@
             backdrop-filter: blur(15px);
             padding: 50px;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             max-width: 900px;
+            width: 100%;
         }
 
         h1 {
             color: #0D47A1;
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            text-shadow: none;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
 
         .subtitle {
             color: #546E7A;
-            font-size: 1.1rem;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            margin-top: 30px;
         }
 
         .menu-option {
-            padding: 35px 25px;
-            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
-            color: white !important;
+            padding: 30px;
+            background: linear-gradient(135deg, #1976D2, #1565C0);
+            color: white;
             border-radius: 15px;
             text-decoration: none;
-            font-size: 1.1rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .menu-option .icon {
-            font-size: 3rem;
+            transition: 0.3s;
         }
 
         .menu-option:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 35px rgba(25, 118, 210, 0.4);
-        }
-
-        .menu-option span {
-            display: block;
-            font-size: 0.85rem;
-            opacity: 0.9;
-            font-weight: normal;
+            transform: translateY(-6px);
         }
 
         .logout-btn {
@@ -94,113 +69,78 @@
             color: white;
             border: none;
             border-radius: 25px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
         .logout-btn:hover {
             background-color: #D32F2F;
-            transform: translateY(-2px);
         }
 
         .user-info {
             background: #E3F2FD;
-            padding: 12px 20px;
+            padding: 10px;
             border-radius: 10px;
             margin-bottom: 20px;
             color: #0D47A1;
-            font-weight: 600;
+            font-weight: bold;
+            display: none;
         }
     </style>
 </head>
+
 <body>
 
     <div class="menu-container">
-        <div class="user-info" id="user-info" style="display:none;">
+        <div class="user-info" id="user-info">
             👤 Bienvenido, <span id="user-name"></span>
         </div>
 
         <h1>🏍️ Sistema de Taller</h1>
-        <p class="subtitle">Gestión profesional para tu negocio</p>
-        
+        <p class="subtitle">Gestión profesional</p>
+
         <div class="menu-grid">
-            <a href="clientes.html" class="menu-option">
-                <div class="icon">👥</div>
-                <div>
-                    <strong>Clientes</strong>
-                    <span>Gestión de clientes y motos</span>
-                </div>
-            </a>
-            
-            <a href="inventario.html" class="menu-option">
-                <div class="icon">📦</div>
-                <div>
-                    <strong>Inventario</strong>
-                    <span>Control de repuestos</span>
-                </div>
-            </a>
-            
-            <a href="venta.html" class="menu-option">
-                <div class="icon">🛒</div>
-                <div>
-                    <strong>Ventas</strong>
-                    <span>Punto de venta rápido</span>
-                </div>
-            </a>
-
-            <a href="agenda.html" class="menu-option">
-                <div class="icon">📅</div>
-                <div>
-                    <strong>Agenda</strong>
-                    <span>Citas y recordatorios</span>
-                </div>
-            </a>
-
-            <a href="tv.html" class="menu-option" target="_blank">
-                <div class="icon">📺</div>
-                <div>
-                    <strong>Pantalla TV</strong>
-                    <span>Vista para televisor</span>
-                </div>
-            </a>
-
-            <a href="reportes.html" class="menu-option">
-                <div class="icon">📊</div>
-                <div>
-                    <strong>Reportes</strong>
-                    <span>Estadísticas y Excel</span>
-                </div>
-            </a>
+            <a href="clientes.html" class="menu-option">👥 Clientes</a>
+            <a href="inventario.html" class="menu-option">📦 Inventario</a>
+            <a href="venta.html" class="menu-option">🛒 Ventas</a>
+            <a href="agenda.html" class="menu-option">📅 Agenda</a>
+            <a href="reportes.html" class="menu-option">📊 Reportes</a>
         </div>
 
-        <button class="logout-btn" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+        <button class="logout-btn" id="btn-logout">🚪 Cerrar Sesión</button>
     </div>
 
+    <!-- 🔐 AUTH -->
     <script type="module">
-        import { verificarAutenticacion, obtenerUsuarioActual, cerrarSesion } from './firebase-config.js';
+        import {
+            verificarAutenticacion,
+            obtenerUsuarioActual,
+            cerrarSesion
+        } from './firebase-config.js';
 
-        // Verificar autenticación
+        // Verifica sesión al cargar
         (async () => {
             try {
                 await verificarAutenticacion();
                 const usuario = obtenerUsuarioActual();
-                
+
                 if (usuario) {
                     document.getElementById('user-info').style.display = 'block';
-                    document.getElementById('user-name').textContent = usuario.nombre;
+                    document.getElementById('user-name').textContent = usuario.nombre || usuario.email;
                 }
-            } catch (error) {
-                // Redirige a login automáticamente
+            } catch {
+                window.location.replace('login.html');
             }
         })();
 
-        // Función global para cerrar sesión
-        window.cerrarSesion = async function() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+        // Cerrar sesión
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            if (confirm('¿Deseas cerrar sesión?')) {
                 await cerrarSesion();
+                window.location.replace('login.html');
             }
-        }
+        });
     </script>
+
 </body>
 </html>
