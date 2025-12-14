@@ -1,5 +1,5 @@
 // ============================================
-// CLIENTES - VERSIÓN ACTUALIZADA (MARCA Y OBS)
+// CLIENTES - VERSIÓN COMPLETA (MARCA, OBS Y LUGAR)
 // ============================================
 
 import { 
@@ -99,8 +99,8 @@ function cargarClientesRealTime() {
             });
         } else {
             console.log('ℹ️ No hay clientes en la base de datos');
-            // Ajusté el colspan a 9 por las nuevas columnas
-            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:30px; color:#999;">No hay clientes registrados. ¡Agrega el primero!</td></tr>';
+            // Colspan 10 para cubrir todas las columnas nuevas
+            tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:30px; color:#999;">No hay clientes registrados. ¡Agrega el primero!</td></tr>';
         }
     }, (error) => {
         console.error('❌ Error al cargar clientes:', error);
@@ -109,15 +109,16 @@ function cargarClientesRealTime() {
 }
 
 // ============================================
-// CREAR FILA (ACTUALIZADO)
+// CREAR FILA
 // ============================================
 function crearFilaCliente(cliente) {
     const fechaRegistro = cliente.fecha_registro ? formatearFecha(cliente.fecha_registro) : '---';
     const fechaCita = cliente.fecha_cita || '---';
     const horaCita = cliente.hora_cita || '---';
     
-    // Aquí agregamos Marca y Observación a la tabla
-    // Y usamos las clases CSS para los botones pequeños
+    // Dirección fija para la tabla
+    const direccionFija = "Cl 63 #14 -76<br>Cajeto -MotoPro";
+
     return `
         <tr>
             <td><small>${fechaRegistro}</small></td>
@@ -126,8 +127,13 @@ function crearFilaCliente(cliente) {
             <td>${cliente.placa || '---'}</td>
             <td>${cliente.marca || '---'}</td>
             <td>${cliente.modelo_moto || '---'}</td>
+            
             <td><small style="color:#555; display:block; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${cliente.observacion || ''}">${cliente.observacion || '---'}</small></td>
+            
+            <td><small style="color:#0D47A1;">${direccionFija}</small></td>
+            
             <td>${fechaCita} <br> <small>${horaCita}</small></td>
+            
             <td>
                 <button onclick="window.editarCliente('${cliente.id}')" class="btn-accion-sm btn-editar">✏️</button>
                 <button onclick="window.borrarCliente('${cliente.id}', '${cliente.nombre} ${cliente.apellido}')" class="btn-accion-sm btn-borrar">🗑️</button>
@@ -137,7 +143,7 @@ function crearFilaCliente(cliente) {
 }
 
 // ============================================
-// GUARDAR CLIENTE (ACTUALIZADO)
+// GUARDAR CLIENTE
 // ============================================
 async function guardarCliente() {
     console.log('💾 Intentando guardar cliente...');
@@ -165,9 +171,9 @@ async function guardarCliente() {
         apellido,
         telefono,
         placa,
-        marca,           // NUEVO: Se guarda en Firebase
+        marca,          // Se guarda en Firebase
         modelo_moto: modeloMoto,
-        observacion,     // NUEVO: Se guarda en Firebase
+        observacion,    // Se guarda en Firebase
         fecha_cita: fechaCita,
         hora_cita: horaCita,
         fecha_actualizacion: new Date().toISOString()
@@ -202,7 +208,7 @@ async function guardarCliente() {
 }
 
 // ============================================
-// EDITAR CLIENTE (ACTUALIZADO)
+// EDITAR CLIENTE
 // ============================================
 window.editarCliente = async function(clienteId) {
     console.log('✏️ Editando cliente:', clienteId);
@@ -218,9 +224,9 @@ window.editarCliente = async function(clienteId) {
             document.getElementById('cliente-telefono').value = cliente.telefono || '';
             
             document.getElementById('cliente-placa').value = cliente.placa || '';
-            document.getElementById('cliente-marca').value = cliente.marca || ''; // NUEVO: Cargar marca
+            document.getElementById('cliente-marca').value = cliente.marca || ''; // Cargar Marca
             document.getElementById('cliente-modelo').value = cliente.modelo_moto || '';
-            document.getElementById('cliente-observacion').value = cliente.observacion || ''; // NUEVO: Cargar obs
+            document.getElementById('cliente-observacion').value = cliente.observacion || ''; // Cargar Observación
             
             document.getElementById('cliente-fecha-cita').value = cliente.fecha_cita || '';
             document.getElementById('cliente-hora-cita').value = cliente.hora_cita || '';
