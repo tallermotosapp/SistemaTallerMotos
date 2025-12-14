@@ -202,9 +202,9 @@ window.enviarWhatsApp = function(telefono, nombre, fecha, hora) {
 
 Te recordamos que tienes una cita programada:
 
-📅 Fecha: ${fecha}
-🕐 Hora: ${hora}
-🏍️ Taller de Motos
+ Fecha: ${fecha}
+ Hora: ${hora}
+ Cl 63 #14 -76 Cajeto -MotoPro
 
 ¡Te esperamos!`;
     
