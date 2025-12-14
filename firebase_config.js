@@ -12,6 +12,7 @@ import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObjec
 // ============================================
 // IMPORTANTE: Reemplaza estos valores con los de TU proyecto de Firebase
 // Los obtienes en: Firebase Console > Project Settings > Your apps
+
 const firebaseConfig = {
   apiKey: "AIzaSyCQNql_3npQHhkf3TKqk0jdHNCotwqyFg8",
   authDomain: "tallermotosliz.firebaseapp.com",
@@ -22,6 +23,7 @@ const firebaseConfig = {
   appId: "1:536042405456:web:6ac1e8251d0685f4735b55",
   measurementId: "G-KP61WQ8VBQ"
 };
+
 // ============================================
 // INICIALIZAR FIREBASE
 // ============================================
@@ -68,13 +70,28 @@ export {
  */
 export function verificarAutenticacion() {
     return new Promise((resolve, reject) => {
+        // Primero verificar si hay sesión guardada
+        const session = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
+        
+        if (!session) {
+            // No hay sesión - redirigir inmediatamente
+            if (window.location.pathname !== '/login.html' && !window.location.pathname.includes('login')) {
+                window.location.href = 'login.html';
+            }
+            reject('No autenticado');
+            return;
+        }
+        
+        // Verificar con Firebase
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 // Usuario autenticado
                 resolve(user);
             } else {
                 // No autenticado - redirigir a login
-                window.location.href = 'login.html';
+                if (window.location.pathname !== '/login.html' && !window.location.pathname.includes('login')) {
+                    window.location.href = 'login.html';
+                }
                 reject('No autenticado');
             }
         });
