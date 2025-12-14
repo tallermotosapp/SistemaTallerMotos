@@ -1,5 +1,5 @@
 // ============================================
-// CLIENTES - VERSIÓN FIREBASE (CORREGIDA)
+// CLIENTES - VERSIÓN FIREBASE CORRECTA
 // ============================================
 
 import { 
@@ -13,49 +13,50 @@ import {
     onValue,
     verificarAutenticacion,
     obtenerUsuarioActual,
-    formatearFecha,
-    cerrarSesion
+    formatearFecha
 } from '../firebase-config.js';
 
-// Variables globales
 let clientesCache = [];
 
 // ============================================
 // INICIALIZACIÓN
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
-    // Verificar autenticación
+    console.log('🚀 Iniciando módulo de clientes...');
+    
     try {
         await verificarAutenticacion();
+        console.log('✅ Usuario autenticado');
         mostrarUsuarioActual();
     } catch (error) {
-        console.log('No autenticado, redirigiendo...');
+        console.log('❌ No autenticado');
         return;
     }
     
-    // Elementos del DOM
     const formCliente = document.getElementById('form-cliente');
     const btnCancelar = document.getElementById('btn-cancelar-cliente');
     
-    // Event Listeners
-    formCliente.addEventListener('submit', (e) => {
-        e.preventDefault();
-        guardarCliente();
-    });
+    if (formCliente) {
+        formCliente.addEventListener('submit', (e) => {
+            e.preventDefault();
+            guardarCliente();
+        });
+    }
     
-    btnCancelar.addEventListener('click', resetFormulario);
+    if (btnCancelar) {
+        btnCancelar.addEventListener('click', resetFormulario);
+    }
     
-    // Cargar clientes en tiempo real
     cargarClientesRealTime();
 });
 
 // ============================================
-// MOSTRAR USUARIO ACTUAL
+// MOSTRAR USUARIO
 // ============================================
 function mostrarUsuarioActual() {
     const usuario = obtenerUsuarioActual();
     if (usuario) {
-        console.log(`✅ Usuario: ${usuario.nombre} (${usuario.rol})`);
+        console.log(`👤 Usuario: ${usuario.nombre}`);
     }
 }
 
@@ -63,17 +64,25 @@ function mostrarUsuarioActual() {
 // CARGAR CLIENTES EN TIEMPO REAL
 // ============================================
 function cargarClientesRealTime() {
+    console.log('📡 Conectando a Firebase...');
     const clientesRef = ref(database, 'clientes');
     
     onValue(clientesRef, (snapshot) => {
+        console.log('📥 Datos recibidos de Firebase');
         clientesCache = [];
         const tbody = document.getElementById('tabla-clientes-body');
+        
+        if (!tbody) {
+            console.error('❌ No se encontró tabla-clientes-body');
+            return;
+        }
+        
         tbody.innerHTML = '';
         
         if (snapshot.exists()) {
             const data = snapshot.val();
+            console.log('✅ Clientes encontrados:', Object.keys(data).length);
             
-            // Convertir objeto a array
             Object.keys(data).forEach(key => {
                 const cliente = {
                     id: key,
@@ -82,25 +91,24 @@ function cargarClientesRealTime() {
                 clientesCache.push(cliente);
             });
             
-            // Ordenar por nombre
             clientesCache.sort((a, b) => a.nombre.localeCompare(b.nombre));
             
-            // Renderizar tabla
             clientesCache.forEach(cliente => {
                 const fila = crearFilaCliente(cliente);
                 tbody.innerHTML += fila;
             });
         } else {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:#999;">No hay clientes registrados. Agrega el primero.</td></tr>';
+            console.log('ℹ️ No hay clientes en la base de datos');
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px; color:#999;">No hay clientes registrados. ¡Agrega el primero!</td></tr>';
         }
     }, (error) => {
         console.error('❌ Error al cargar clientes:', error);
-        alert('Error al cargar datos. Verifica tu conexión a Firebase.');
+        alert('Error al cargar datos: ' + error.message);
     });
 }
 
 // ============================================
-// CREAR FILA DE CLIENTE
+// CREAR FILA
 // ============================================
 function crearFilaCliente(cliente) {
     const fechaRegistro = cliente.fecha_registro ? formatearFecha(cliente.fecha_registro) : '---';
@@ -117,17 +125,19 @@ function crearFilaCliente(cliente) {
             <td>${fechaCita}</td>
             <td>${horaCita}</td>
             <td>
-                <button onclick="window.editarCliente('${cliente.id}')" style="background-color: #2196F3;">✏️ Editar</button>
-                <button onclick="window.borrarCliente('${cliente.id}', '${cliente.nombre} ${cliente.apellido}')" style="background-color: #f44336;">🗑️ Borrar</button>
+                <button onclick="window.editarCliente('${cliente.id}')" style="background-color: #2196F3; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer;">✏️ Editar</button>
+                <button onclick="window.borrarCliente('${cliente.id}', '${cliente.nombre} ${cliente.apellido}')" style="background-color: #f44336; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer;">🗑️ Borrar</button>
             </td>
         </tr>
     `;
 }
 
 // ============================================
-// GUARDAR CLIENTE (CORREGIDO)
+// GUARDAR CLIENTE
 // ============================================
 async function guardarCliente() {
+    console.log('💾 Intentando guardar cliente...');
+    
     const nombre = document.getElementById('cliente-nombre').value.trim();
     const apellido = document.getElementById('cliente-apellido').value.trim();
     const telefono = document.getElementById('cliente-telefono').value.trim();
@@ -153,14 +163,16 @@ async function guardarCliente() {
         fecha_actualizacion: new Date().toISOString()
     };
     
+    console.log('📤 Datos a guardar:', datosCliente);
+    
     try {
         if (clienteId) {
-            // ACTUALIZAR cliente existente
+            console.log('🔄 Actualizando cliente:', clienteId);
             const clienteRef = ref(database, `clientes/${clienteId}`);
             await update(clienteRef, datosCliente);
             alert('✅ Cliente actualizado correctamente');
         } else {
-            // CREAR nuevo cliente
+            console.log('➕ Creando nuevo cliente...');
             const clientesRef = ref(database, 'clientes');
             const nuevoClienteRef = push(clientesRef);
             
@@ -168,12 +180,13 @@ async function guardarCliente() {
             
             await set(nuevoClienteRef, datosCliente);
             
+            console.log('✅ Cliente creado con ID:', nuevoClienteRef.key);
             alert('✅ Cliente creado correctamente');
         }
         
         resetFormulario();
     } catch (error) {
-        console.error('❌ Error al guardar cliente:', error);
+        console.error('❌ Error al guardar:', error);
         alert('❌ Error al guardar: ' + error.message);
     }
 }
@@ -182,6 +195,7 @@ async function guardarCliente() {
 // EDITAR CLIENTE
 // ============================================
 window.editarCliente = async function(clienteId) {
+    console.log('✏️ Editando cliente:', clienteId);
     try {
         const clienteRef = ref(database, `clientes/${clienteId}`);
         const snapshot = await get(clienteRef);
@@ -205,7 +219,7 @@ window.editarCliente = async function(clienteId) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     } catch (error) {
-        console.error('❌ Error al cargar cliente:', error);
+        console.error('❌ Error:', error);
         alert('Error al cargar datos del cliente');
     }
 }
@@ -218,13 +232,15 @@ window.borrarCliente = async function(clienteId, nombreCompleto) {
         return;
     }
     
+    console.log('🗑️ Borrando cliente:', clienteId);
     try {
         const clienteRef = ref(database, `clientes/${clienteId}`);
         await remove(clienteRef);
         
+        console.log('✅ Cliente borrado');
         alert('✅ Cliente borrado correctamente');
     } catch (error) {
-        console.error('❌ Error al borrar cliente:', error);
+        console.error('❌ Error:', error);
         alert('❌ Error al borrar: ' + error.message);
     }
 }
@@ -236,8 +252,8 @@ function resetFormulario() {
     document.getElementById('form-cliente').reset();
     document.getElementById('cliente-id').value = '';
     document.querySelector('#form-cliente h3').innerText = 'Agregar Cliente';
-    document.querySelector('#form-cliente button[type="submit"]').innerText = 'Guardar Cliente';
+    document.querySelector('#form-cliente button[type="submit"]').innerText = '💾 Guardar Cliente';
     document.getElementById('btn-cancelar-cliente').style.display = 'none';
 }
 
-console.log('✅ Módulo de Clientes cargado correctamente');
+console.log('✅ Módulo de clientes cargado');
