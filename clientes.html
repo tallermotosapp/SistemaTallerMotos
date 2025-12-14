@@ -3,94 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Clientes - Sistema Taller</title>
+    <title>Sistema de Taller</title>
     
     <link rel="stylesheet" href="css/estilos.css">
+
+    <style>
+        body {
+            background-image: linear-gradient(rgba(25, 118, 210, 0.7), rgba(13, 71, 161, 0.8)), url('img/taller_fondo.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+        }
+
+        h1 {
+            color: #0D47A1;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: none;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: #546E7A;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .menu-option {
+            padding: 35px 25px;
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            color: white !important;
+            border-radius: 15px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-option .icon {
+            font-size: 3rem;
+        }
+
+        .menu-option:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(25, 118, 210, 0.4);
+        }
+
+        .menu-option span {
+            display: block;
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: normal;
+        }
+
+        .logout-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background-color: #F44336;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #D32F2F;
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            background: #E3F2FD;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: #0D47A1;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="header-content">
-            <div class="brand-container">
-                <h1>Sistema de Taller</h1>
-            </div>
-            
-            <nav class="taller-nav">
-                <a href="index.html" class="nav-link">🏠 Inicio</a>
-                <a href="clientes.html" class="nav-link active">👥 Clientes</a>
-                <a href="inventario.html" class="nav-link">📦 Inventario</a>
-                <a href="agenda.html" class="nav-link">📅 Agenda</a>
-            </nav>
+    <div class="menu-container">
+        <div class="user-info" id="user-info" style="display:none;">
+            👤 Bienvenido, <span id="user-name"></span>
         </div>
-    </header>
 
-    <main>
-        <section id="seccion-clientes">
-            <h2>👥 Gestión de Clientes</h2>
+        <h1>🏍️ Sistema de Taller</h1>
+        <p class="subtitle">Gestión profesional para tu negocio</p>
+        
+        <div class="menu-grid">
+            <a href="clientes.html" class="menu-option">
+                <div class="icon">👥</div>
+                <div>
+                    <strong>Clientes</strong>
+                    <span>Gestión de clientes y citas</span>
+                </div>
+            </a>
             
-            <form id="form-cliente">
-                <h3>Agregar Cliente</h3>
+            <a href="inventario.html" class="menu-option">
+                <div class="icon">📦</div>
+                <div>
+                    <strong>Inventario</strong>
+                    <span>Control de repuestos</span>
+                </div>
+            </a>
+            
+            <a href="venta.html" class="menu-option">
+                <div class="icon">🛒</div>
+                <div>
+                    <strong>Ventas</strong>
+                    <span>Punto de venta rápido</span>
+                </div>
+            </a>
+
+            <a href="agenda.html" class="menu-option">
+                <div class="icon">📅</div>
+                <div>
+                    <strong>Agenda</strong>
+                    <span>Calendario completo</span>
+                </div>
+            </a>
+
+            <a href="tv.html" class="menu-option" target="_blank">
+                <div class="icon">📺</div>
+                <div>
+                    <strong>Pantalla TV</strong>
+                    <span>Vista para televisor</span>
+                </div>
+            </a>
+
+            <a href="reportes.html" class="menu-option">
+                <div class="icon">📊</div>
+                <div>
+                    <strong>Reportes</strong>
+                    <span>Estadísticas y Excel</span>
+                </div>
+            </a>
+        </div>
+
+        <button class="logout-btn" id="btn-logout">🚪 Cerrar Sesión</button>
+    </div>
+
+    <script type="module">
+        import { 
+            verificarAutenticacion, 
+            obtenerUsuarioActual, 
+            cerrarSesion as firebaseCerrarSesion 
+        } from './firebase-config.js';
+
+        // Verificar autenticación al cargar
+        (async () => {
+            try {
+                await verificarAutenticacion();
+                const usuario = obtenerUsuarioActual();
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;">
-                    <input type="text" id="cliente-nombre" placeholder="Nombre *" required>
-                    <input type="text" id="cliente-apellido" placeholder="Apellido *" required>
-                </div>
+                if (usuario) {
+                    document.getElementById('user-info').style.display = 'block';
+                    document.getElementById('user-name').textContent = usuario.nombre || usuario.username;
+                }
+            } catch (error) {
+                console.log('No autenticado, redirigiendo a login...');
+                // verificarAutenticacion ya hace el redirect
+            }
+        })();
 
-                <input type="tel" id="cliente-telefono" placeholder="Teléfono" style="width: 100%;">
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;">
-                    <input type="text" id="cliente-placa" placeholder="Placa de la Moto">
-                    <input type="text" id="cliente-modelo" placeholder="Modelo de la Moto">
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;">
-                    <div>
-                        <label for="cliente-fecha-cita" style="font-size: 0.9em; color: #546E7A; display: block; margin-bottom: 5px;">📅 Fecha de Cita:</label>
-                        <input type="date" id="cliente-fecha-cita">
-                    </div>
-                    <div>
-                        <label for="cliente-hora-cita" style="font-size: 0.9em; color: #546E7A; display: block; margin-bottom: 5px;">🕐 Hora de Cita:</label>
-                        <input type="time" id="cliente-hora-cita">
-                    </div>
-                </div>
-
-                <input type="hidden" id="cliente-id">
-                
-                <div style="width: 100%; margin-top: 10px;">
-                    <button type="submit">💾 Guardar Cliente</button>
-                    <button type="button" id="btn-cancelar-cliente" style="display:none; background-color: #EF5350;">❌ Cancelar</button>
-                </div>
-            </form>
-
-            <br>
-            <hr>
-            <br>
-
-            <h3>📋 Lista de Clientes Registrados</h3>
-            <table border="0">
-                <thead>
-                    <tr>
-                        <th>Fecha Registro</th>
-                        <th>Nombre Completo</th>
-                        <th>Teléfono</th>
-                        <th>Placa</th>
-                        <th>Modelo Moto</th>
-                        <th>Fecha Cita</th>
-                        <th>Hora Cita</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-clientes-body">
-                    <tr>
-                        <td colspan="8" style="text-align:center; padding:30px;">
-                            Cargando clientes...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <script type="module" src="js/clientes.js"></script>
+        // Cerrar sesión
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                try {
+                    await firebaseCerrarSesion();
+                    // La función cerrarSesion ya redirige a login.html
+                } catch (error) {
+                    console.error('Error al cerrar sesión:', error);
+                    alert('Error al cerrar sesión. Recargando página...');
+                    window.location.reload();
+                }
+            }
+        });
+    </script>
 </body>
 </html>
