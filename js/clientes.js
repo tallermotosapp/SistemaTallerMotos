@@ -1,5 +1,5 @@
 // ============================================
-// CLIENTES - VERSIÓN COMPLETA (MARCA, OBS Y LUGAR)
+// CLIENTES - VERSIÓN FIREBASE CON ESTADOS
 // ============================================
 
 import { 
@@ -17,6 +17,7 @@ import {
 } from '../firebase-config.js';
 
 let clientesCache = [];
+let filtroActual = 'Todos';
 
 // ============================================
 // INICIALIZACIÓN
@@ -93,14 +94,10 @@ function cargarClientesRealTime() {
             
             clientesCache.sort((a, b) => a.nombre.localeCompare(b.nombre));
             
-            clientesCache.forEach(cliente => {
-                const fila = crearFilaCliente(cliente);
-                tbody.innerHTML += fila;
-            });
+            renderizarClientes();
         } else {
             console.log('ℹ️ No hay clientes en la base de datos');
-            // Colspan 10 para cubrir todas las columnas nuevas
-            tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:30px; color:#999;">No hay clientes registrados. ¡Agrega el primero!</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:30px; color:#999;">No hay clientes registrados. ¡Agrega el primero!</td></tr>';
         }
     }, (error) => {
         console.error('❌ Error al cargar clientes:', error);
@@ -109,37 +106,85 @@ function cargarClientesRealTime() {
 }
 
 // ============================================
-// CREAR FILA
+// RENDERIZAR CLIENTES (CON FILTRO)
+// ============================================
+function renderizarClientes() {
+    const tbody = document.getElementById('tabla-clientes-body');
+    tbody.innerHTML = '';
+    
+    let clientesFiltrados = clientesCache;
+    
+    if (filtroActual !== 'Todos') {
+        clientesFiltrados = clientesCache.filter(c => c.estado_cita === filtroActual);
+    }
+    
+    if (clientesFiltrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:30px; color:#999;">No hay clientes con estado "${filtroActual}"</td></tr>`;
+        return;
+    }
+    
+    clientesFiltrados.forEach(cliente => {
+        const fila = crearFilaCliente(cliente);
+        tbody.innerHTML += fila;
+    });
+}
+
+// ============================================
+// CREAR FILA (CON ESTADO)
 // ============================================
 function crearFilaCliente(cliente) {
     const fechaRegistro = cliente.fecha_registro ? formatearFecha(cliente.fecha_registro) : '---';
     const fechaCita = cliente.fecha_cita || '---';
     const horaCita = cliente.hora_cita || '---';
+    const estadoCita = cliente.estado_cita || 'Pendiente';
     
-    // Dirección fija para la tabla
-    const direccionFija = "Cl 63 #14 -76<br>Cajeto -MotoPro";
-
+    // Colores según estado
+    const estadoStyles = {
+        'Pendiente': 'background: #FFF3E0; color: #E65100; border-left: 4px solid #FF9800;',
+        'Asistió': 'background: #E8F5E9; color: #2E7D32; border-left: 4px solid #4CAF50;',
+        'Cancelada': 'background: #FFEBEE; color: #C62828; border-left: 4px solid #F44336;',
+        'No asistió': 'background: #F5F5F5; color: #616161; border-left: 4px solid #9E9E9E;'
+    };
+    
+    const estadoIconos = {
+        'Pendiente': '🟡',
+        'Asistió': '🟢',
+        'Cancelada': '🔴',
+        'No asistió': '⚪'
+    };
+    
+    const estadoStyle = estadoStyles[estadoCita] || estadoStyles['Pendiente'];
+    const estadoIcono = estadoIconos[estadoCita] || '🟡';
+    
     return `
         <tr>
             <td><small>${fechaRegistro}</small></td>
             <td><strong>${cliente.nombre} ${cliente.apellido}</strong></td>
             <td>${cliente.telefono || '---'}</td>
             <td>${cliente.placa || '---'}</td>
-            <td>${cliente.marca || '---'}</td>
             <td>${cliente.modelo_moto || '---'}</td>
-            
-            <td><small style="color:#555; display:block; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${cliente.observacion || ''}">${cliente.observacion || '---'}</small></td>
-            
-            <td><small style="color:#0D47A1;">${direccionFija}</small></td>
-            
-            <td>${fechaCita} <br> <small>${horaCita}</small></td>
-            
+            <td>${fechaCita}</td>
+            <td>${horaCita}</td>
             <td>
-                <button onclick="window.editarCliente('${cliente.id}')" class="btn-accion-sm btn-editar">✏️</button>
-                <button onclick="window.borrarCliente('${cliente.id}', '${cliente.nombre} ${cliente.apellido}')" class="btn-accion-sm btn-borrar">🗑️</button>
+                <span style="${estadoStyle} padding: 8px 12px; border-radius: 8px; font-weight: 600; display: inline-block;">
+                    ${estadoIcono} ${estadoCita}
+                </span>
+            </td>
+            <td>
+                <button onclick="window.editarCliente('${cliente.id}')" style="background-color: #2196F3; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer;">✏️ Editar</button>
+                <button onclick="window.borrarCliente('${cliente.id}', '${cliente.nombre} ${cliente.apellido}')" style="background-color: #f44336; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer;">🗑️ Borrar</button>
             </td>
         </tr>
     `;
+}
+
+// ============================================
+// FILTRAR POR ESTADO
+// ============================================
+window.filtrarPorEstado = function(estado) {
+    filtroActual = estado;
+    console.log('🔍 Filtrando por:', estado);
+    renderizarClientes();
 }
 
 // ============================================
@@ -151,14 +196,11 @@ async function guardarCliente() {
     const nombre = document.getElementById('cliente-nombre').value.trim();
     const apellido = document.getElementById('cliente-apellido').value.trim();
     const telefono = document.getElementById('cliente-telefono').value.trim();
-    
     const placa = document.getElementById('cliente-placa').value.trim();
-    const marca = document.getElementById('cliente-marca').value.trim(); // NUEVO
     const modeloMoto = document.getElementById('cliente-modelo').value.trim();
-    const observacion = document.getElementById('cliente-observacion').value.trim(); // NUEVO
-    
     const fechaCita = document.getElementById('cliente-fecha-cita').value;
     const horaCita = document.getElementById('cliente-hora-cita').value;
+    const estadoCita = document.getElementById('cliente-estado-cita').value;
     const clienteId = document.getElementById('cliente-id').value;
     
     if (!nombre || !apellido) {
@@ -171,11 +213,10 @@ async function guardarCliente() {
         apellido,
         telefono,
         placa,
-        marca,          // Se guarda en Firebase
         modelo_moto: modeloMoto,
-        observacion,    // Se guarda en Firebase
         fecha_cita: fechaCita,
         hora_cita: horaCita,
+        estado_cita: estadoCita,
         fecha_actualizacion: new Date().toISOString()
     };
     
@@ -222,14 +263,11 @@ window.editarCliente = async function(clienteId) {
             document.getElementById('cliente-nombre').value = cliente.nombre;
             document.getElementById('cliente-apellido').value = cliente.apellido;
             document.getElementById('cliente-telefono').value = cliente.telefono || '';
-            
             document.getElementById('cliente-placa').value = cliente.placa || '';
-            document.getElementById('cliente-marca').value = cliente.marca || ''; // Cargar Marca
             document.getElementById('cliente-modelo').value = cliente.modelo_moto || '';
-            document.getElementById('cliente-observacion').value = cliente.observacion || ''; // Cargar Observación
-            
             document.getElementById('cliente-fecha-cita').value = cliente.fecha_cita || '';
             document.getElementById('cliente-hora-cita').value = cliente.hora_cita || '';
+            document.getElementById('cliente-estado-cita').value = cliente.estado_cita || 'Pendiente';
             document.getElementById('cliente-id').value = clienteId;
             
             document.querySelector('#form-cliente h3').innerText = '✏️ Editando Cliente';
@@ -271,6 +309,7 @@ window.borrarCliente = async function(clienteId, nombreCompleto) {
 function resetFormulario() {
     document.getElementById('form-cliente').reset();
     document.getElementById('cliente-id').value = '';
+    document.getElementById('cliente-estado-cita').value = 'Pendiente';
     document.querySelector('#form-cliente h3').innerText = 'Agregar Cliente';
     document.querySelector('#form-cliente button[type="submit"]').innerText = '💾 Guardar Cliente';
     document.getElementById('btn-cancelar-cliente').style.display = 'none';
