@@ -3,43 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Clientes - Sistema Taller MotoPro</title>
+    <title>Gestión de Clientes - Sistema Taller</title>
     
     <link rel="stylesheet" href="css/estilos.css">
-
-    <style>
-        /* Estilos para botones pequeños en la tabla */
-        .btn-accion-sm {
-            padding: 5px 10px;
-            font-size: 0.85em;
-            margin: 0 2px;
-            cursor: pointer;
-            border-radius: 4px;
-            border: none;
-            color: white;
-        }
-        .btn-editar { background-color: #FFB74D; } /* Naranja */
-        .btn-borrar { background-color: #E57373; } /* Rojo */
-        
-        /* Estilo para el área de observación */
-        textarea {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            resize: vertical;
-            font-family: inherit;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        /* Dirección en el encabezado */
-        .brand-address {
-            font-size: 0.8rem;
-            color: #E0F7FA;
-            margin: 5px 0 0 0;
-            font-weight: normal;
-        }
-    </style>
 </head>
 <body>
 
@@ -47,13 +13,13 @@
         <div class="header-content">
             <div class="brand-container">
                 <h1>Sistema de Taller</h1>
-                <p class="brand-address">📍 Cl 63 #14 -76 Cajeto - MotoPro</p>
             </div>
             
             <nav class="taller-nav">
                 <a href="index.html" class="nav-link">🏠 Inicio</a>
                 <a href="clientes.html" class="nav-link active">👥 Clientes</a>
                 <a href="agenda.html" class="nav-link">📅 Agenda</a>
+                <a href="reportes.html" class="nav-link">📊 Reportes</a>
             </nav>
         </div>
     </header>
@@ -70,24 +36,14 @@
                     <input type="text" id="cliente-apellido" placeholder="Apellido *" required>
                 </div>
 
-                <input type="tel" id="cliente-telefono" placeholder="Teléfono" style="width: 100%; margin-top: 10px;">
+                <input type="tel" id="cliente-telefono" placeholder="Teléfono" style="width: 100%;">
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; width: 100%; margin-top: 10px;">
-                    <input type="text" id="cliente-placa" placeholder="Placa">
-                    <input type="text" id="cliente-marca" placeholder="Marca (Ej: Yamaha)">
-                    <input type="text" id="cliente-modelo" placeholder="Modelo">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;">
+                    <input type="text" id="cliente-placa" placeholder="Placa de la Moto">
+                    <input type="text" id="cliente-modelo" placeholder="Modelo de la Moto">
                 </div>
 
-                <div style="width: 100%; margin-top: 10px;">
-                    <textarea id="cliente-observacion" rows="2" placeholder="Observaciones / Trabajo a realizar"></textarea>
-                </div>
-
-                <div style="background-color: #E3F2FD; padding: 8px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #2196F3;">
-                    <small style="color: #0D47A1; font-weight: bold;">📍 Lugar de la cita:</small>
-                    <span style="font-size: 0.9em; color: #333;">Cl 63 #14 -76 Cajeto -MotoPro</span>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 10px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;">
                     <div>
                         <label for="cliente-fecha-cita" style="font-size: 0.9em; color: #546E7A; display: block; margin-bottom: 5px;">📅 Fecha de Cita:</label>
                         <input type="date" id="cliente-fecha-cita">
@@ -96,6 +52,16 @@
                         <label for="cliente-hora-cita" style="font-size: 0.9em; color: #546E7A; display: block; margin-bottom: 5px;">🕐 Hora de Cita:</label>
                         <input type="time" id="cliente-hora-cita">
                     </div>
+                </div>
+
+                <div style="width: 100%;">
+                    <label for="cliente-estado-cita" style="font-size: 0.9em; color: #546E7A; display: block; margin-bottom: 5px;">📋 Estado de la Cita:</label>
+                    <select id="cliente-estado-cita" style="width: 100%;">
+                        <option value="Pendiente">🟡 Pendiente</option>
+                        <option value="Asistió">🟢 Asistió</option>
+                        <option value="Cancelada">🔴 Cancelada</option>
+                        <option value="No asistió">⚪ No asistió</option>
+                    </select>
                 </div>
 
                 <input type="hidden" id="cliente-id">
@@ -111,24 +77,34 @@
             <br>
 
             <h3>📋 Lista de Clientes Registrados</h3>
-            <table border="0" style="width: 100%; border-collapse: collapse;">
+            
+            <!-- Filtros -->
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <label style="font-weight: 600; margin-right: 10px;">🔍 Filtrar por estado:</label>
+                <button onclick="window.filtrarPorEstado('Todos')" class="btn-filtro" style="background: #1976D2; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;">Todos</button>
+                <button onclick="window.filtrarPorEstado('Pendiente')" class="btn-filtro" style="background: #FFA726; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;">🟡 Pendiente</button>
+                <button onclick="window.filtrarPorEstado('Asistió')" class="btn-filtro" style="background: #4CAF50; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;">🟢 Asistió</button>
+                <button onclick="window.filtrarPorEstado('Cancelada')" class="btn-filtro" style="background: #F44336; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;">🔴 Cancelada</button>
+                <button onclick="window.filtrarPorEstado('No asistió')" class="btn-filtro" style="background: #9E9E9E; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer;">⚪ No asistió</button>
+            </div>
+
+            <table border="0">
                 <thead>
-                    <tr style="background-color: #f5f5f5; text-align: left;">
-                        <th style="padding: 10px;">Fecha Reg.</th>
-                        <th>Cliente</th>
+                    <tr>
+                        <th>Fecha Registro</th>
+                        <th>Nombre Completo</th>
                         <th>Teléfono</th>
                         <th>Placa</th>
-                        <th>Marca</th>
-                        <th>Modelo</th>
-                        <th>Observación</th>
-                        <th>Lugar</th>
-                        <th>Cita</th>
+                        <th>Modelo Moto</th>
+                        <th>Fecha Cita</th>
+                        <th>Hora Cita</th>
+                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tabla-clientes-body">
                     <tr>
-                        <td colspan="10" style="text-align:center; padding:30px;">
+                        <td colspan="9" style="text-align:center; padding:30px;">
                             Cargando clientes...
                         </td>
                     </tr>
@@ -140,5 +116,3 @@
     <script type="module" src="js/clientes.js"></script>
 </body>
 </html>
-
-
